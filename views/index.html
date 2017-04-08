@@ -4,15 +4,208 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="./../public/javascripts/materialize.min.js"></script>
     <script src="./../public/javascripts/jquery-3.1.1.js"></script>
+    <script src="./../public/javascripts/materialize.min.js"></script>
     <script src="./../public/javascripts/knockout-3.4.2.js"></script>
     <link rel="stylesheet" href="./../public/stylesheets/materialize.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="./../public/images/icon.png" />
+    <link href="https://fonts.googleapis.com/css?family=Great+Vibes|Lobster|Oleo+Script|Amaranth" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <title>Bit Breaker</title>
+    <style>
+        blockquote {
+            padding-top: 30px;
+            font-size: 40px;
+            font-family: 'Great Vibes', cursive;
+        }
+        
+        label {
+            color: white !important;
+        }
+        
+        .carousel-item h2 {
+            font-size: 35px;
+            font-family: 'Lobster', cursive;
+            padding-top: 10px;
+        }
+        
+        .infoText {
+            font-size: 35px;
+            padding-top: 20px;
+            font-family: 'Amaranth', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
 </head>
 
 <body>
+    <!-- Start of NavBar -->
+    <nav>
+        <div class="nav-wrapper blue">
+            <a href="#" class="brand-logo center" style="font-family: 'Oleo Script', cursive">Bit Breaker</a>
+            <a href="#" class="hide-on-med-and-down">
+                <img src="./../public/images/icon.png" alt="Brand Logo" style="padding-left: 14px; height: 90%; padding-top: 3px" />
+            </a>
 
+            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+
+            <ul class="right hide-on-med-and-down">
+                <li><a href="#registerModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
+                <li><a href="#loginModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
+            </ul>
+
+            <ul class="side-nav blue" id="mobile-demo">
+                <li><a href="#registerModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
+                <li><a href="#loginModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+    <!-- End of NavBar -->
+
+    <!-- Start of Alert Modal -->
+    <div id="alertModal" class="modal">
+        <div class="modal-content center" id="alertModalContent"></div>
+    </div>
+    <!-- End of Alert Modal -->
+
+    <!-- Start of Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
+            <h5>Login Here...</h5>
+        </div>
+        <div class="modal-content purple">
+            <div class="row white-text">
+                <div class="input-field col s12">
+                    <input id="loginUsername" type="text" class="validate">
+                    <label for="loginUsername">User Name: </label>
+                </div>
+            </div>
+            <div class="row white-text">
+                <div class="input-field col s12">
+                    <input id="loginPassword" type="password" class="validate">
+                    <label for="loginPassword">Password: </label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer purple">
+            <button class="waves-effect waves-light btn red right z-depth-5" style="margin-right: 14px">
+                Login !!!
+            </button>
+        </div>
+    </div>
+    <!-- End of Login Modal -->
+
+    <!-- Start of Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
+            <h5>Register Here...</h5>
+        </div>
+        <div class="modal-content purple">
+            <div class="row white-text">
+                <div class="input-field col s12">
+                    <input id="registerUsername" type="text" class="validate">
+                    <label for="registerUsername">User Name: </label>
+                </div>
+            </div>
+            <div class="row white-text">
+                <div class="input-field col s12">
+                    <input id="registerPassword" type="password" class="validate">
+                    <label for="registerPassword">Password: </label>
+                </div>
+            </div>
+            <div class="row white-text">
+                <div class="input-field col s12">
+                    <input id="registerRePassword" type="password" class="validate">
+                    <label for="registerRePassword">Re-Enter Password: </label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer purple">
+            <button class="waves-effect waves-light btn red right z-depth-5" style="margin-right: 14px">
+                Register !!!
+            </button>
+        </div>
+    </div>
+    <!-- End of Register Modal -->
+
+    <!-- Start of Generic holder DIV -->
+    <div>
+
+        <!-- Start of About Slider -->
+        <div class="carousel carousel-slider center" data-indicators="true">
+            <div class="carousel-item green white-text" href="#one!">
+                <h2 style="font-size: 40px;">What This Website is About: </h2>
+                <div class="white-text infoText">
+                    <div class="container">
+                        This is a simple webiste to break any habit or to keep yourself motivated to do something new...
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item light-blue white-text" href="#two!">
+                <h2 style="font-size: 40px;">How to get started: </h2>
+                <div class="white-text infoText">
+                    <div class="container">
+                        Just create an account and we'll try to keep you motivated through you're goals...
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item orange white-text" href="#three!">
+                <h2 style="font-size: 40px;">Anything Else: </h2>
+                <div class="white-text infoText">
+                    <div class="container">
+                        We hope that you wil find this website useful and achieve yor goals that you set!!!
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End of About Slider -->
+
+        <!-- Start of Quotes Silder -->
+        <div class="carousel carousel-slider center" data-indicators="true">
+            <div class="carousel-item red white-text" href="#one!">
+                <blockquote class="white-text quoteBody"></blockquote>
+                <div class="container right">
+                    <h2 class="quoteAuthor"></h2>
+                </div>
+            </div>
+            <div class="carousel-item amber white-text" href="#two!">
+                <blockquote class="white-text quoteBody"></blockquote>
+                <div class="container right">
+                    <h2 class="quoteAuthor"></h2>
+                </div>
+            </div>
+            <div class="carousel-item green white-text" href="#three!">
+                <blockquote class="white-text quoteBody"></blockquote>
+                <div class="container right">
+                    <h2 class="quoteAuthor"></h2>
+                </div>
+            </div>
+            <div class="carousel-item purple white-text" href="#four!">
+                <blockquote class="white-text quoteBody"></blockquote>
+                <div class="container right">
+                    <h2 class="quoteAuthor"></h2>
+                </div>
+            </div>
+        </div>
+        <!-- End of Quotes Silder -->
+
+    </div>
+    <!-- End of Generic Holder DIV -->
+
+    <!-- Start of Footer -->
+    <div class="blue darken-4" style="padding: 14px 0; font-family: 'Lobster', cursive">
+        <div class="container white-text">
+            © 2017 Copyright
+            <a href="https://www.github.com/Rud156" target="_blank" class="grey-text right"> Desgined By: Rud156 </a>
+        </div>
+    </div>
+    <!-- End of Footer -->
+
+    <script>
+        $('.modal').modal();
+        $(".button-collapse").sideNav();
+        $('.carousel.carousel-slider').carousel({ fullWidth: true });
+    </script>
+    <script src="./../public/JS/Script.js"></script>
 </body>
 
 </html>
