@@ -2,10 +2,27 @@
 /// <reference path="./../javascripts/knockoutJS.d.ts" />
 /// <reference path="./../javascripts/SammyJS.d.ts" />
 
-function handleError(error) {
-    console.log(error);
-    window.alert("Error Occurred");
+function utilityFunction() {
+    this.handleError = function (error) {
+        console.log(error);
+        $("#alertModal").modal('open');
+        document.getElementById('alertModalContent').innerText = "Error Occurred.";
+    };
+
+    this.stringToTitleCase = function (baseString) {
+        baseString = baseString.toLowerCase().split(' ');
+        for (var i = 0; i < baseString.length; i++) {
+            baseString[i] = baseString[i].charAt(0).toUpperCase() + baseString[i].slice(1);
+        }
+        return baseString.join(' ');
+    };
+
+    this.showMessages = function (message) {
+        $("#alertModal").modal('open');
+        document.getElementById('alertModalContent').innerText = message;
+    };
 }
+var utility = new utilityFunction();
 
 function getAndSetQuote(quoteBody, quoteAuthor) {
     $.ajax({
@@ -17,7 +34,7 @@ function getAndSetQuote(quoteBody, quoteAuthor) {
             quoteAuthor.innerText = '--- ' + data.author_name;
         },
         error: function (error) {
-            handleError(error);
+            utility.handleError(error);
         }
     });
 }
@@ -27,3 +44,112 @@ var quoteAuthors = document.getElementsByClassName('quoteAuthor');
 for (var i = 0; i < quoteBodies.length; i++)
     getAndSetQuote(quoteBodies[i], quoteAuthors[i]);
 
+
+function loggedUser(userObject) {
+    this.userName = utility.stringToTitleCase(userObject.username);
+}
+
+function bitBreaks(habitObject) {
+    this.hash = habitObject.hash;
+    this.title = utility.stringToTitleCase(habitObject.title);
+    this.description = decodeURI(habitObject.description);
+    this.startDate = habitObject.startDate;
+    this.totalDays = habitObject.endDate;
+    this.foreverHabit = habitObject.foreverHabit;
+    this.dailyStatus = habitObject.dailyStatus;
+}
+
+function mainController() {
+    var self = this;
+
+    self.currentUser = ko.observable();
+    self.userBitBreaks = ko.observableArray();
+
+    self.loginUser = function () {
+        var userName = document.getElementById('loginUsername').value.trim();
+        var password = document.getElementById('loginPassword').value.trim();
+        if (userName === '' || password === '') {
+            utility.showMessages("Fields cannot be blank!!!");
+            return;
+        }
+
+        $.ajax({
+            url: 'http://localhost:3000/auth/login',
+            contentType: 'application/json',
+            type: 'POST',
+            data: JSON.stringify({ username: userName, password: password }),
+            success: function (data) {
+                if (data.success) {
+                    self.currentUser(new loggedUser(data.user));
+                    $("#loginModal").modal('close');
+                }
+                else {
+                    utility.showMessages(data.message);
+                }
+            },
+            error: function (error) {
+                utility.handleError(error);
+            }
+        });
+    };
+
+    self.registerUser = function () {
+        var userName = document.getElementById('registerUsername').value.trim();
+        var password = document.getElementById('registerPassword').value.trim();
+        var rePassword = document.getElementById('registerRePassword').value.trim();
+
+        if (userName === '' || password === '' || rePassword === '') {
+            utility.showMessages('Fields cannot be blank!!!');
+            return;
+        }
+        if (password !== rePassword) {
+            utility.showMessages('Passwords do not match. Please check them...');
+            return;
+        }
+
+        $.ajax({
+            url: 'http://localhost:3000/auth/register',
+            contentType: 'application/json',
+            type: 'POST',
+            data: JSON.stringify({ username: userName, password: password }),
+            success: function (data) {
+                if (data.success) {
+                    self.currentUser(new loggedUser(data.user));
+                    $("#registerModal").modal('close');
+                }
+                else {
+                    utility.showMessages(data.message);
+                }
+            },
+            error: function (error) {
+                utility.handleError(error);
+            }
+        });
+    };
+
+    self.logoutUser = function () {
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:3000/auth/logout',
+            success: function (data) {
+                if (data.success) {
+                    self.currentUser(null);
+                    for (var i = 0; i < quoteBodies.length; i++)
+                        getAndSetQuote(quoteBodies[i], quoteAuthors[i]);
+                    var slider = $('.carousel.carousel-slider');
+                    if (slider.hasClass('initialized'))
+                        slider.removeClass('initialized');
+                    $('.carousel.carousel-slider').carousel({ fullWidth: true });
+                }
+                else {
+                    utility.showMessages(data.message);
+                }
+            },
+            error: function (error) {
+                utility.handleError(error);
+            }
+        });
+    };
+}
+
+ko.applyBindings(new mainController());

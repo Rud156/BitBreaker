@@ -8,12 +8,6 @@ var userSchema = mongoose.Schema({
     },
     password: {
         type: String
-    },
-    email: {
-        type: String
-    },
-    fullName: {
-        type: String
     }
 });
 
@@ -28,8 +22,8 @@ var habitSchema = mongoose.Schema({
     },
     title: String,
     description: String,
-    startDate: String,
-    endDate: Number,
+    startDate: Date,
+    totalDays: Number,
     ended: Boolean,
     foreverHabit: Boolean,
     dailyStatus: {}

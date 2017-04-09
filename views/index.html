@@ -43,19 +43,21 @@
         <div class="nav-wrapper blue">
             <a href="#" class="brand-logo center" style="font-family: 'Oleo Script', cursive">Bit Breaker</a>
             <a href="#" class="hide-on-med-and-down">
-                <img src="./../public/images/icon.png" alt="Brand Logo" style="padding-left: 14px; height: 90%; padding-top: 3px" />
+                <img src="./../public/images/icon.png" alt="Brand Logo" style="padding-left: 14px; height: 95%; padding-top: 3px" />
             </a>
 
             <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
 
             <ul class="right hide-on-med-and-down">
-                <li><a href="#registerModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
-                <li><a href="#loginModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
+                <li data-bind="ifnot: currentUser"><a href="#registerModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
+                <li data-bind="ifnot: currentUser"><a href="#loginModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
+                <li data-bind="click: logoutUser, if: currentUser"><a href="#" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
             </ul>
 
             <ul class="side-nav blue" id="mobile-demo">
-                <li><a href="#registerModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
-                <li><a href="#loginModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
+                <li data-bind="ifnot: currentUser"><a href="#registerModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
+                <li data-bind="ifnot: currentUser"><a href="#loginModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
+                <li data-bind="click: logoutUser, if: currentUser"><a href="#" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
             </ul>
         </div>
     </nav>
@@ -87,7 +89,7 @@
             </div>
         </div>
         <div class="modal-footer purple">
-            <button class="waves-effect waves-light btn red right z-depth-5" style="margin-right: 14px">
+            <button class="waves-effect waves-light btn red right z-depth-5" style="margin-right: 14px" data-bind="click: loginUser">
                 Login !!!
             </button>
         </div>
@@ -120,16 +122,15 @@
             </div>
         </div>
         <div class="modal-footer purple">
-            <button class="waves-effect waves-light btn red right z-depth-5" style="margin-right: 14px">
+            <button class="waves-effect waves-light btn red right z-depth-5" style="margin-right: 14px" data-bind="click: registerUser">
                 Register !!!
             </button>
         </div>
     </div>
     <!-- End of Register Modal -->
 
-    <!-- Start of Generic holder DIV -->
-    <div>
-
+    <!-- Start of HomePage Generic holder DIV -->
+    <div data-bind="ifnot: currentUser">
         <!-- Start of About Slider -->
         <div class="carousel carousel-slider center" data-indicators="true">
             <div class="carousel-item green white-text" href="#one!">
@@ -144,7 +145,7 @@
                 <h2 style="font-size: 40px;">How to get started: </h2>
                 <div class="white-text infoText">
                     <div class="container">
-                        Just create an account and we'll try to keep you motivated through you're goals...
+                        Just create an account and we'll try to keep you motivated till you complete you're goals...
                     </div>
                 </div>
             </div>
@@ -152,7 +153,7 @@
                 <h2 style="font-size: 40px;">Anything Else: </h2>
                 <div class="white-text infoText">
                     <div class="container">
-                        We hope that you wil find this website useful and achieve yor goals that you set!!!
+                        We hope that you wil find this website useful and achieve your goals that you set!!!
                     </div>
                 </div>
             </div>
@@ -187,15 +188,20 @@
             </div>
         </div>
         <!-- End of Quotes Silder -->
-
     </div>
-    <!-- End of Generic Holder DIV -->
+    <!-- End of Homepage Generic Holder DIV -->
+
+    <!-- Start of DashBoard Generic Holder DIV -->
+    <div data-bind="if: currentUser">
+        <h3>This is the dashboard of user <span data-bind="text: currentUser().userName"></span></h3>
+    </div>
+    <!-- End if DashBoard Generic Holder DIV -->
 
     <!-- Start of Footer -->
     <div class="blue darken-4" style="padding: 14px 0; font-family: 'Lobster', cursive">
         <div class="container white-text">
             © 2017 Copyright
-            <a href="https://www.github.com/Rud156" target="_blank" class="grey-text right"> Desgined By: Rud156 </a>
+            <a href="https://www.github.com/Rud156" target="_blank" class="white-text right"> Desgined with 💗 by: Rud156 </a>
         </div>
     </div>
     <!-- End of Footer -->

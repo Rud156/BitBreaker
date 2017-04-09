@@ -29,10 +29,7 @@ router.post('/register', function (req, res, next) {
     }
     var username = req.body.username;
     var password = req.body.password;
-    var email = req.body.email;
-    var fullName = req.body.fullName;
-    if (username === undefined || password === undefined || email === undefined || fullName === undefined ||
-        typeof (username) !== 'string' || typeof (password) !== 'string' || typeof (email) !== 'string' || typeof (fullName) !== 'string') {
+    if (username === undefined || password === undefined || typeof (username) !== 'string' || typeof (password) !== 'string') {
         return res.json({ success: false, message: 'Incorrect form fields entered' });
     }
     else {
@@ -42,19 +39,13 @@ router.post('/register', function (req, res, next) {
                 if (!userObject) {
                     var newUser = Model.User({
                         username: username,
-                        password: password,
-                        email: email,
-                        fullName: fullName,
-                        habits: []
+                        password: password
                     });
                     Model.createUser(newUser, function (err, savedUser) {
                         if (err)
                             throw err;
                         var userObject = {
-                            username: savedUser.username,
-                            fullName: savedUser.fullName,
-                            email: savedUser.email,
-                            habits: savedUser.habits
+                            username: savedUser.username
                         };
                         return res.json({ success: true, message: 'Successfully Registered', user: userObject });
                     });
@@ -109,10 +100,7 @@ router.post('/login',
     }),
     function (req, res) {
         var userObject = {
-            username: req.user.username,
-            fullName: req.user.fullName,
-            email: req.user.fullName,
-            habits: req.user.habits
+            username: req.user.username
         };
         return res.json({ success: true, message: 'SuccessFul Login', user: userObject });
     }

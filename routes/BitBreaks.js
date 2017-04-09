@@ -71,13 +71,16 @@ router.patch('/one/:hash', checkAuthentication, function (req, res, next) {
     });
 });
 
-router.patch('/endhabit/:hash', function (req, res, next) {
+router.patch('/endhabit/:hash', checkAuthentication, function (req, res, next) {
     var hash = req.params.hash;
     Model.BitBreaks.findOne({ hash: hash }, function (err, bitObject) {
         if (err)
             throw err;
         if (!bitObject)
             return res.json({ success: false, message: 'Invalid habit specified' });
+        if (res.locals.user.username !== bitObject.username)
+            return res.json({ success: false, message: 'You are not the creator of this habit. So you cannot end it...' });
+
         bitObject.ended = true;
         bitObject.save(function (err, updatedObject) {
             if (err)
@@ -93,7 +96,7 @@ router.post('/save', checkAuthentication, function (req, res, next) {
     var title = req.body.title;
     var description = req.body.description;
     var startDate = req.body.startDate;
-    var endDate = req.body.endDate;
+    var totalDays = req.body.totalDays;
     var forever = req.body.forever;
     var username = req.body.username;
 
@@ -101,9 +104,9 @@ router.post('/save', checkAuthentication, function (req, res, next) {
     var ended = false;
 
     // TODO: After building front end change typeof(startDate) to 'object'
-    if (title === undefined || description === undefined || startDate === undefined || endDate === undefined ||
+    if (title === undefined || description === undefined || startDate === undefined || totalDays === undefined ||
         forever === undefined || username === undefined || typeof (title) !== 'string' || typeof (description) !== 'string' ||
-        typeof (startDate) !== 'string' || typeof (endDate) !== 'number' || typeof (forever) !== 'boolean' || typeof (username) !== 'string') {
+        typeof (startDate) !== 'string' || typeof (totalDays) !== 'number' || typeof (forever) !== 'boolean' || typeof (username) !== 'string') {
         return res.json({ success: false, message: 'Incorrect form fields entered' });
     }
     username = username.toLowerCase();
@@ -125,7 +128,7 @@ router.post('/save', checkAuthentication, function (req, res, next) {
             title: title,
             description: encodeURI(description),
             startDate: startDate,
-            endDate: endDate,
+            totalDays: totalDays,
             foreverHabit: forever,
             dailyStatus: dailyStatus,
             ended: ended
