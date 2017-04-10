@@ -2,6 +2,24 @@
 /// <reference path="./../javascripts/knockoutJS.d.ts" />
 /// <reference path="./../javascripts/SammyJS.d.ts" />
 
+// Start of default initializations
+flatpickr('.flatpickr');
+var iFrame = null;
+tinymce.init({
+    selector: "#bitDescription",
+    theme: 'modern',
+    plugins: ['image textcolor spellchecker insertdatetime table searchreplace link emoticons colorpicker textcolor autoresize imagetools paste'],
+    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | link image | bullist numlist outdent indent | emoticons forecolor`',
+    setup: function (editor) {
+        editor.on('init', function (e) {
+            iFrame = document.getElementById('bitDescription_ifr');
+            iFrame = iFrame.contentWindow || iFrame.contentDocument;
+        });
+    },
+    default_link_target: "_blank"
+});
+// End of default initializations
+
 function utilityFunction() {
     this.handleError = function (error) {
         console.log(error);
@@ -46,6 +64,12 @@ function utilityFunction() {
 
         return totalDays;
     };
+
+    this.dateDiff = function (startDate, endDate) {
+        var oneDay = 24 * 60 * 60 * 1000;
+        var dateDiff = Math.round(Math.abs((startDate.getTime() - endDate.getTime()) / oneDay));
+        return dateDiff;
+    };
 }
 var utility = new utilityFunction();
 
@@ -78,20 +102,21 @@ function bitBreaks(habitObject) {
     this.hash = habitObject.hash;
     this.title = utility.stringToTitleCase(habitObject.title);
     this.description = decodeURI(habitObject.description);
-    this.startDate = habitObject.startDate;
+
+    this.startDate = new Date(habitObject.startDate);
+
     this.totalDays = habitObject.totalDays;
     this.foreverHabit = habitObject.foreverHabit;
     this.dailyStatus = habitObject.dailyStatus;
     this.ended = habitObject.ended;
 
-    this.daysLeft = utility.daysLeft(habitObject.startDate, habitObject.totalDays);
-    this.endDate = utility.endingDate(habitObject.startDate, habitObject.totalDays);
+    this.daysLeft = utility.daysLeft(this.startDate, habitObject.totalDays);
+    this.endDate = utility.endingDate(this.startDate, habitObject.totalDays);
 }
 
 function mainController() {
     var self = this;
 
-    // Currently the user is always logged in. Change this when UI is complete
     self.currentUser = ko.observable();
     self.userActiveBitBreaks = ko.observableArray();
     self.userEndedBitBreaks = ko.observableArray();
@@ -105,7 +130,7 @@ function mainController() {
         }
 
         $.ajax({
-            url: 'http://localhost:3000/auth/login',
+            url: '/auth/login',
             contentType: 'application/json',
             type: 'POST',
             data: JSON.stringify({ username: userName, password: password }),
@@ -113,6 +138,7 @@ function mainController() {
                 if (data.success) {
                     self.currentUser(new loggedUser(data.user));
                     $("#loginModal").modal('close');
+                    self.getUserHabits();
                 }
                 else {
                     utility.showMessages(data.message);
@@ -139,7 +165,7 @@ function mainController() {
         }
 
         $.ajax({
-            url: 'http://localhost:3000/auth/register',
+            url: '/auth/register',
             contentType: 'application/json',
             type: 'POST',
             data: JSON.stringify({ username: userName, password: password }),
@@ -147,6 +173,7 @@ function mainController() {
                 if (data.success) {
                     self.currentUser(new loggedUser(data.user));
                     $("#registerModal").modal('close');
+                    self.getUserHabits();
                 }
                 else {
                     utility.showMessages(data.message);
@@ -158,8 +185,80 @@ function mainController() {
         });
     };
 
-    self.saveNewHabit = function () {
+    self.getUserHabits = function () {
+        $.ajax({
+            url: '/habits/all',
+            type: 'GET',
+            success: function (data) {
+                if (data.success) {
+                    data.bitBreaks.forEach(function (value) {
+                        if (value.ended) {
+                            self.userEndedBitBreaks.push(new bitBreaks(value));
+                        }
+                        else {
+                            self.userActiveBitBreaks.push(new bitBreaks(value));
+                        }
+                    });
+                }
+                else {
+                    utility.showMessages(data.message);
+                }
+            },
+            error: function () {
+                utility.handleError(error);
+            }
+        });
+    };
 
+    self.saveNewHabit = function () {
+        var title = document.getElementById('bitTitle').value.trim();
+        var description = iFrame.document.body.innerHTML;
+        var endDate = document.getElementById('bitEndDate').value.trim();
+        var foreverCheck = document.getElementById('foreverCheck').checked;
+
+        if (endDate === '' && foreverCheck === false) {
+            utility.showMessages('You cannot leave both end date and forever checkbox blank. Please select either one...');
+            return;
+        }
+        if (title === '') {
+            utility.showMessages('Please enter a title to continue...');
+            return;
+        }
+        description = encodeURI(description);
+
+        var startDate = new Date();
+        startDate.setUTCHours(0, 0, 0, 0);
+        endDate = new Date(endDate);
+
+        var totalDays = -1;
+        if (!foreverCheck)
+            totalDays = utility.dateDiff(startDate, endDate);
+
+        var dataSet = {
+            title: title,
+            description: description,
+            startDate: startDate,
+            totalDays: totalDays,
+            forever: foreverCheck,
+            username: self.currentUser().userName
+        };
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(dataSet),
+            url: '/habits/save',
+            success: function (data) {
+                if (data.success) {
+                    $("#editorModal").modal('close');
+                    self.userActiveBitBreaks.push(new bitBreaks(data.bitBreak));
+                }
+                else
+                    utility.showMessages(data.message);
+            },
+            error: function (error) {
+                utility.handleError(error);
+            }
+        });
     };
 }
 

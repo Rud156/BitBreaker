@@ -4,13 +4,16 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="./javascripts/jquery-3.1.1.js"></script>
-    <script src="./javascripts/materialize.min.js"></script>
-    <script src="./javascripts/knockout-3.4.2.js"></script>
+    <link rel="stylesheet" href="./stylesheets/material_blue.css" />
     <link rel="stylesheet" href="./stylesheets/materialize.css" />
     <link rel="shortcut icon" type="image/x-icon" href="./images/icon.png" />
     <link href="https://fonts.googleapis.com/css?family=Great+Vibes|Lobster|Oleo+Script|Amaranth" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script src="./javascripts/jquery-3.1.1.js"></script>
+    <script src="./javascripts/materialize.min.js"></script>
+    <script src="./javascripts/knockout-3.4.2.js"></script>
+    <script src="./javascripts/tinymce.min.js"></script>
+    <script src="./javascripts/flatpickr.js"></script>
     <title>Bit Breaker</title>
     <style>
         html,
@@ -54,7 +57,7 @@
     <!-- Start of NavBar -->
     <nav>
         <div class="nav-wrapper blue">
-            <a href="#" class="brand-logo center" style="font-family: 'Oleo Script', cursive">Bit Breaker</a>
+            <a href="/" class="brand-logo center" style="font-family: 'Oleo Script', cursive">Bit Breaker</a>
             <a href="#" class="hide-on-med-and-down">
                 <img src="./images/icon.png" alt="Brand Logo" style="padding-left: 14px; height: 95%; padding-top: 3px" />
             </a>
@@ -144,12 +147,40 @@
 
     <!-- Start of Editor Modal -->
     <div id="editorModal" class="modal">
-        <div class="modal-content">
-            <h4>Modal Header</h4>
-            <p>A bunch of text</p>
+        <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
+            <h5>New Habit</h5>
         </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+        <div class="modal-content purple" style="font-family: 'Lobster', cursive">
+            <div class="row white-text">
+                <div class="input-field col s12">
+                    <input id="bitTitle" type="text" class="validate">
+                    <label for="bitTitle">Habit Title: </label>
+                </div>
+            </div>
+            <div class="row white-text">
+                <div class="col s12 center">
+                    <label for="bitDescription" style="font-size: 1rem">Habit Description:</label>
+                    <textarea id="bitDescription"></textarea>
+                </div>
+            </div>
+            <div class="row white-text">
+                <div class="col s12 center">
+                    <label for="bitEndDate" style="font-size: 1rem">End Date: </label>
+                    <input type="text" class="flatpickr tooltipped white-text" data-position="top" data-tooltip="Click to select date..." id="bitEndDate"
+                        placeholder="Select ending date if the habit is not valid forever..." />
+                </div>
+            </div>
+            <div class="row white-text">
+                <div class="col s12 center">
+                    <input type="checkbox" class="filled-in" id="foreverCheck" />
+                    <label for="foreverCheck">Is the habit valid forever?</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer purple">
+            <button class="waves-effect waves-light btn red right z-depth-5" style="margin-right: 14px" data-bind="click: saveNewHabit">
+                Save Habit
+            </button>
         </div>
     </div>
     <!-- End of Editor Modal -->
@@ -223,21 +254,23 @@
 
             <!-- Start of Active Habit Holder -->
             <div>
-                <h3>
+                <h3 class="center">
                     Currently Active Habits:
                 </h3>
-                <div class="row">
+                <h5 class="center grey-text" style="font-family: 'Amaranth', Tahoma, Geneva, Verdana, sans-serif" data-bind="visible: userActiveBitBreaks().length === 0">
+                    You don't seem to have any active habits
+                </h5>
+                <div class="row" data-bind="foreach: userActiveBitBreaks">
                     <div class="col s12 m6">
                         <div class="card blue lighten-1 center white-text">
                             <div class="card-content">
-                                <span class="card-title">Bit Break Title</span>
-                                <div>
-                                    This is some description for the habit
-                                </div>
+                                <span class="card-title" data-bind="text: title"></span>
+                                <div data-bind="html: description"></div>
                             </div>
                             <div class="card-action">
-                                <div>Days Left: <span>54</span></div>
-                                <div>Ending Date: <span>12-04-2017</span></div>
+                                <div data-bind="ifnot: foreverHabit">Days Left: <span data-bind="text: daysLeft"></span></div>
+                                <div data-bind="ifnot: foreverHabit">Ending Date: <span data-bind="text: endDate.toDateString()"></span></div>
+                                <div data-bind="if: foreverHabit">Looks like you have &#8734; time left. Try to make the best use of it.</div>
                             </div>
                         </div>
                     </div>
@@ -247,21 +280,18 @@
 
             <!-- Start of Ended or Expired Habit Holder -->
             <div style="padding-top: 50px">
-                <h3>
+                <h3 class="center">
                     Ended Habits:
                 </h3>
-                <div class="row">
+                <h5 class="center grey-text" style="font-family: 'Amaranth', Tahoma, Geneva, Verdana, sans-serif" data-bind="visible: userEndedBitBreaks().length === 0">
+                    You don't seem to have any completed habits
+                </h5>
+                <div class="row" data-bind="foreach: userEndedBitBreaks">
                     <div class="col s12 m6">
                         <div class="card blue lighten-1 center white-text">
                             <div class="card-content">
-                                <span class="card-title">Bit Break Title</span>
-                                <div>
-                                    This is some description for the habit
-                                </div>
-                            </div>
-                            <div class="card-action">
-                                <div>Days Left: <span>54</span></div>
-                                <div>Ending Date: <span>12-04-2017</span></div>
+                                <span class="card-title" data-bind="text: title"></span>
+                                <div data-bind="html: description"></div>
                             </div>
                         </div>
                     </div>
@@ -294,6 +324,7 @@
         $('.modal').modal();
         $(".button-collapse").sideNav();
         $('.carousel.carousel-slider').carousel({ fullWidth: true });
+        $('.tooltipped').tooltip({ delay: 0 });
     </script>
     <script src="./JS/Script.js"></script>
 </body>

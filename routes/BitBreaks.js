@@ -46,8 +46,6 @@ router.patch('/one/:hash', checkAuthentication, function (req, res, next) {
                 return res.json({ success: false, message: 'You cannot update an ended habit' });
 
             // TODO: Calculate date diffrence on the front end and supply it
-            // var oneDay = 24 * 60 * 60 * 1000;
-            // var dateDiff = Math.abs((setDate.getTime() - bitBreakObject.startDate.getTime()) / oneDay);
 
             var dateDiff = setDate;
             if (dateDiff > 0)
@@ -114,8 +112,7 @@ router.post('/save', checkAuthentication, function (req, res, next) {
         startDate = new Date(startDate);
     }
     catch (error) {
-        console.log(error.message);
-        return res.json({ success: false, message: 'Invalid date parameters' });
+        return res.json({ success: false, message: 'Invalid date format' });
     }
 
     username = username.toLowerCase();
@@ -135,7 +132,7 @@ router.post('/save', checkAuthentication, function (req, res, next) {
             hash: hash,
             username: username,
             title: title,
-            description: encodeURI(description),
+            description: description,
             startDate: startDate,
             totalDays: totalDays,
             foreverHabit: forever,
