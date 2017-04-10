@@ -150,6 +150,26 @@ router.post('/save', checkAuthentication, function (req, res, next) {
     });
 });
 
+router.delete('/delete/:hash', function (req, res, next) {
+    var hash = req.params.hash;
+    Model.BitBreaks.findOne({ hash: hash }, function (err, bitBreak) {
+        if (err)
+            throw err;
+        if (!bitBreak) {
+            return res.json({ success: false, message: 'Invalid habit specified' });
+        }
+        if (bitBreak.username !== res.locals.user.username) {
+            return res.json({ success: false, message: 'You are not the creator of this habit. So you cannot delete it' });
+        }
+
+        Model.BitBreaks.findOneAndRemove({ hash: hash }, function (err, bitBreakObject) {
+            if (err)
+                throw err;
+            return res.json({ success: true, message: 'Habit successfully removed' });
+        });
+    });
+});
+
 
 function checkAuthentication(req, res, next) {
     if (req.isAuthenticated())

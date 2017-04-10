@@ -108,7 +108,8 @@ router.post('/login',
 
 router.get('/logout', function (req, res, next) {
     req.logout();
-    res.redirect('/');
+    // res.redirect('/');
+    res.json({ success: true, message: 'Successful logout' });
 });
 
 module.exports = router;

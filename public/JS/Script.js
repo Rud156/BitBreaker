@@ -92,7 +92,7 @@ function mainController() {
     var self = this;
 
     // Currently the user is always logged in. Change this when UI is complete
-    self.currentUser = ko.observable(new loggedUser({ username: 'rud156' }));
+    self.currentUser = ko.observable();
     self.userActiveBitBreaks = ko.observableArray();
     self.userEndedBitBreaks = ko.observableArray();
 
