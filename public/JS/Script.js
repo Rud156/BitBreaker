@@ -158,30 +158,6 @@ function mainController() {
         });
     };
 
-    self.logoutUser = function () {
-        $.ajax({
-            type: 'GET',
-            url: 'http://localhost:3000/auth/logout',
-            success: function (data) {
-                if (data.success) {
-                    self.currentUser(null);
-                    for (var i = 0; i < quoteBodies.length; i++)
-                        getAndSetQuote(quoteBodies[i], quoteAuthors[i]);
-                    var slider = $('.carousel.carousel-slider');
-                    if (slider.hasClass('initialized'))
-                        slider.removeClass('initialized');
-                    $('.carousel.carousel-slider').carousel({ fullWidth: true });
-                }
-                else {
-                    utility.showMessages(data.message);
-                }
-            },
-            error: function (error) {
-                utility.handleError(error);
-            }
-        });
-    };
-
     self.saveNewHabit = function () {
 
     };

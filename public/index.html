@@ -64,13 +64,13 @@
             <ul class="right hide-on-med-and-down">
                 <li data-bind="ifnot: currentUser"><a href="#registerModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
                 <li data-bind="ifnot: currentUser"><a href="#loginModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
-                <li data-bind="click: logoutUser, if: currentUser"><a href="#" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
+                <li data-bind="if: currentUser"><a href="/auth/logout" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
             </ul>
 
             <ul class="side-nav blue" id="mobile-demo">
                 <li data-bind="ifnot: currentUser"><a href="#registerModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
                 <li data-bind="ifnot: currentUser"><a href="#loginModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
-                <li data-bind="click: logoutUser, if: currentUser"><a href="#" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
+                <li data-bind="if: currentUser"><a href="/auth/logout" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
             </ul>
         </div>
     </nav>
