@@ -13,6 +13,15 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <title>Bit Breaker</title>
     <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+        }
+        
         blockquote {
             padding-top: 30px;
             font-size: 40px;
@@ -33,6 +42,10 @@
             font-size: 35px;
             padding-top: 20px;
             font-family: 'Amaranth', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        #displayContainer {
+            font-family: 'Oleo Script', cursive;
         }
     </style>
 </head>
@@ -129,6 +142,9 @@
     </div>
     <!-- End of Register Modal -->
 
+    <!-- Start of Editor Modal -->
+    <!-- End of Editor Modal -->
+
     <!-- Start of HomePage Generic holder DIV -->
     <div data-bind="ifnot: currentUser">
         <!-- Start of About Slider -->
@@ -193,7 +209,66 @@
 
     <!-- Start of DashBoard Generic Holder DIV -->
     <div data-bind="if: currentUser">
-        <h3>This is the dashboard of user <span data-bind="text: currentUser().userName"></span></h3>
+        <!--<h3>This is the dashboard of user <span data-bind="text: currentUser().userName"></span></h3>-->
+        <div class="container" id="displayContainer">
+
+            <!-- Start of Active Habit Holder -->
+            <div>
+                <h3>
+                    Currently Active Habits:
+                </h3>
+                <div class="row">
+                    <div class="col s12 m6">
+                        <div class="card blue lighten-1 center white-text">
+                            <div class="card-content">
+                                <span class="card-title">Bit Break Title</span>
+                                <div>
+                                    This is some description for the habit
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <div>Days Left: <span>54</span></div>
+                                <div>Ending Date: <span>12-04-2017</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Active Habit Holder -->
+
+            <!-- Start of Ended or Expired Habit Holder -->
+            <div style="padding-top: 50px">
+                <h3>
+                    Ended Habits:
+                </h3>
+                <div class="row">
+                    <div class="col s12 m6">
+                        <div class="card blue lighten-1 center white-text">
+                            <div class="card-content">
+                                <span class="card-title">Bit Break Title</span>
+                                <div>
+                                    This is some description for the habit
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <div>Days Left: <span>54</span></div>
+                                <div>Ending Date: <span>12-04-2017</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Ended or Expired Habit Holder -->
+        </div>
+
+        <!-- Start of Fixed Action Button -->
+        <div class="fixed-action-btn">
+            <a class="btn-floating btn-large purple waves-effect waves-light" data-bind="click: openEditorModal">
+                <i class="large material-icons">mode_edit</i>
+            </a>
+        </div>
+        <!-- End of Fixed Action Button -->
+
     </div>
     <!-- End if DashBoard Generic Holder DIV -->
 

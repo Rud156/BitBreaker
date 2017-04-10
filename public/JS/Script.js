@@ -21,6 +21,31 @@ function utilityFunction() {
         $("#alertModal").modal('open');
         document.getElementById('alertModalContent').innerText = message;
     };
+
+    this.endingDate = function (startDate, totalDays) {
+        var oneDay = 24 * 60 * 60 * 1000;
+
+        var todayDate = new Date();
+        todayDate.setUTCHours(0, 0, 0, 0);
+
+        var dateDiff = Math.round(Math.abs((startDate.getTime() - todayDate.getTime()) / oneDay));
+        totalDays -= dateDiff;
+
+        todayDate.setDate(todayDate.getDate() + totalDays);
+        return todayDate;
+    };
+
+    this.daysLeft = function (startDate, totalDays) {
+        var oneDay = 24 * 60 * 60 * 1000;
+
+        var todayDate = new Date();
+        todayDate.setUTCHours(0, 0, 0, 0);
+
+        var dateDiff = Math.round(Math.abs((startDate.getTime() - todayDate.getTime()) / oneDay));
+        totalDays -= dateDiff;
+
+        return totalDays;
+    };
 }
 var utility = new utilityFunction();
 
@@ -54,16 +79,22 @@ function bitBreaks(habitObject) {
     this.title = utility.stringToTitleCase(habitObject.title);
     this.description = decodeURI(habitObject.description);
     this.startDate = habitObject.startDate;
-    this.totalDays = habitObject.endDate;
+    this.totalDays = habitObject.totalDays;
     this.foreverHabit = habitObject.foreverHabit;
     this.dailyStatus = habitObject.dailyStatus;
+    this.ended = habitObject.ended;
+
+    this.daysLeft = utility.daysLeft(habitObject.startDate, habitObject.totalDays);
+    this.endDate = utility.endingDate(habitObject.startDate, habitObject.totalDays);
 }
 
 function mainController() {
     var self = this;
 
-    self.currentUser = ko.observable();
-    self.userBitBreaks = ko.observableArray();
+    // Currently the user is always logged in. Change this when UI is complete
+    self.currentUser = ko.observable(new loggedUser({ username: 'rud156' }));
+    self.userActiveBitBreaks = ko.observableArray();
+    self.userEndedBitBreaks = ko.observableArray();
 
     self.loginUser = function () {
         var userName = document.getElementById('loginUsername').value.trim();
@@ -149,6 +180,14 @@ function mainController() {
                 utility.handleError(error);
             }
         });
+    };
+
+    self.openEditorModal = function () {
+
+    };
+
+    self.saveNewHabit = function () {
+
     };
 }
 

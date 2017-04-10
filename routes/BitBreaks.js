@@ -109,6 +109,15 @@ router.post('/save', checkAuthentication, function (req, res, next) {
         typeof (startDate) !== 'string' || typeof (totalDays) !== 'number' || typeof (forever) !== 'boolean' || typeof (username) !== 'string') {
         return res.json({ success: false, message: 'Incorrect form fields entered' });
     }
+
+    try {
+        startDate = new Date(startDate);
+    }
+    catch (error) {
+        console.log(error.message);
+        return res.json({ success: false, message: 'Invalid date parameters' });
+    }
+
     username = username.toLowerCase();
     if (username !== res.locals.user.username) {
         return res.json({ success: false, message: 'User is either not logged in or the username is invalid' });
