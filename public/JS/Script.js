@@ -182,10 +182,6 @@ function mainController() {
         });
     };
 
-    self.openEditorModal = function () {
-
-    };
-
     self.saveNewHabit = function () {
 
     };
