@@ -9,6 +9,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="./images/icon.png" />
     <link href="https://fonts.googleapis.com/css?family=Great+Vibes|Lobster|Oleo+Script|Amaranth" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="./CSS/Masonry.css" />
     <script src="./javascripts/jquery-3.1.1.js"></script>
     <script src="./javascripts/materialize.min.js"></script>
     <script src="./javascripts/knockout-3.4.2.js"></script>
@@ -260,8 +261,9 @@
                 <h5 class="center grey-text" style="font-family: 'Amaranth', Tahoma, Geneva, Verdana, sans-serif" data-bind="visible: userActiveBitBreaks().length === 0">
                     You don't seem to have any active habits
                 </h5>
-                <div class="row" data-bind="foreach: userActiveBitBreaks">
-                    <div class="col s12 m6">
+                <!-- Start of active habits loop holder -->
+                <div class="masonry" data-bind="foreach: userActiveBitBreaks">
+                    <div class="masonry-item">
                         <div class="card blue lighten-1 center white-text">
                             <div class="card-content">
                                 <span class="card-title" data-bind="text: title"></span>
@@ -275,6 +277,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- End of active habits loop holder -->
             </div>
             <!-- End of Active Habit Holder -->
 
@@ -286,8 +289,9 @@
                 <h5 class="center grey-text" style="font-family: 'Amaranth', Tahoma, Geneva, Verdana, sans-serif" data-bind="visible: userEndedBitBreaks().length === 0">
                     You don't seem to have any completed habits
                 </h5>
-                <div class="row" data-bind="foreach: userEndedBitBreaks">
-                    <div class="col s12 m6">
+                <!-- Start of ended habits loop holder -->
+                <div class="masonry" data-bind="foreach: userEndedBitBreaks">
+                    <div class="masonry-item">
                         <div class="card blue lighten-1 center white-text">
                             <div class="card-content">
                                 <span class="card-title" data-bind="text: title"></span>
@@ -296,6 +300,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- End of ended habits loop holder -->
             </div>
             <!-- End of Ended or Expired Habit Holder -->
         </div>
