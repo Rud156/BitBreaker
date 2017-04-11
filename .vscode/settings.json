@@ -1,5 +1,10 @@
 // Place your settings in this file to overwrite default and user settings.
 {
     "files.autoSave": "onWindowChange",
-    "open-in-browser.default": "firefox"
+    "open-in-browser.default": "firefox",
+    "editor.quickSuggestions": {
+        "comments": false,
+        "strings": true,
+        "other": true
+    }
 }

@@ -120,6 +120,9 @@ function mainController() {
     self.currentUser = ko.observable();
     self.userActiveBitBreaks = ko.observableArray();
     self.userEndedBitBreaks = ko.observableArray();
+    self.currentlySelectedHabit = ko.observable();
+
+    self.potentiallyRemovableHabit = null;
 
     self.loginUser = function () {
         var userName = document.getElementById('loginUsername').value.trim();
@@ -259,6 +262,43 @@ function mainController() {
                 utility.handleError(error);
             }
         });
+    };
+
+    self.removeHabit = function (habitObject) {
+        self.potentiallyRemovableHabit = habitObject;
+        $("#promptModal").modal('open');
+    };
+
+    self.deleteHabit = function () {
+        $("#promptModal").modal('close');
+        if (self.potentiallyRemovableHabit === null) {
+            utility.showMessages("No habit marked for deletion!!! You're not playing fair!!!");
+            return;
+        }
+        var hash = self.potentiallyRemovableHabit.hash;
+        $.ajax({
+            url: '/habits/delete/' + hash,
+            type: 'DELETE',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.success) {
+                    self.userActiveBitBreaks.remove(self.potentiallyRemovableHabit);
+                    self.userEndedBitBreaks.remove(self.potentiallyRemovableHabit);
+                    self.potentiallyRemovableHabit = null;
+                }
+                else {
+                    utility.showMessages(data.message);
+                }
+            },
+            error: function (error) {
+                utility.handleError(error);
+            }
+        });
+    };
+
+    self.cancelDeletion = function () {
+        $("#promptModal").modal('close');
+        self.potentiallyRemovableHabit = null;
     };
 }
 

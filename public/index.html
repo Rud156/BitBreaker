@@ -86,6 +86,18 @@
     </div>
     <!-- End of Alert Modal -->
 
+    <!-- Start of User Prompt Modal -->
+    <div id="promptModal" class="modal">
+        <div class="modal-content center">
+            <h5>Do you really want to delete this habit?</h5>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="modal-action waves-effect waves-blue btn-flat" data-bind="click: cancelDeletion">No</a>
+            <a href="#" class="modal-action waves-effect waves-red btn-flat" data-bind="click: deleteHabit">Yes</a>
+        </div>
+    </div>
+    <!--  End of User Prompt Modal ->
+
     <!-- Start of Login Modal -->
     <div id="loginModal" class="modal">
         <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
@@ -266,6 +278,7 @@
                     <div class="masonry-item">
                         <div class="card blue lighten-1 center white-text">
                             <div class="card-content">
+                                <span class="right waves-effect waves-red" style="cursor: pointer" data-bind="click: $root.removeHabit"><i class="material-icons">delete</i></span>
                                 <span class="card-title" data-bind="text: title"></span>
                                 <div data-bind="html: description"></div>
                             </div>
