@@ -112,6 +112,7 @@ router.post('/save', checkAuthentication, function (req, res, next) {
         startDate = new Date(startDate);
     }
     catch (error) {
+        console.log(error);
         return res.json({ success: false, message: 'Invalid date format' });
     }
 

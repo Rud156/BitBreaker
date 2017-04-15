@@ -98,18 +98,19 @@ function loggedUser(userObject) {
     this.userName = utility.stringToTitleCase(userObject.username);
 }
 
-function bitBreaks(habitObject) {
+function BitBreaks(habitObject) {
     this.hash = habitObject.hash;
     this.title = utility.stringToTitleCase(habitObject.title);
     this.description = decodeURI(habitObject.description);
-
     this.startDate = new Date(habitObject.startDate);
-
     this.totalDays = habitObject.totalDays;
+
     this.foreverHabit = habitObject.foreverHabit;
+
     this.dailyStatus = habitObject.dailyStatus;
     this.ended = habitObject.ended;
 
+    // These will give incorrect values if forever habit is checked. Basically -ve values...
     this.daysLeft = utility.daysLeft(this.startDate, habitObject.totalDays);
     this.endDate = utility.endingDate(this.startDate, habitObject.totalDays);
 }
@@ -194,14 +195,18 @@ function mainController() {
             type: 'GET',
             success: function (data) {
                 if (data.success) {
+                    var activeBitBreaks = [];
+                    var endedBitBreaks = [];
                     data.bitBreaks.forEach(function (value) {
                         if (value.ended) {
-                            self.userEndedBitBreaks.push(new bitBreaks(value));
+                            endedBitBreaks.push(new BitBreaks(value));
                         }
                         else {
-                            self.userActiveBitBreaks.push(new bitBreaks(value));
+                            activeBitBreaks.push(new BitBreaks(value));
                         }
                     });
+                    self.userActiveBitBreaks(activeBitBreaks);
+                    self.userEndedBitBreaks(endedBitBreaks);
                 }
                 else {
                     utility.showMessages(data.message);
@@ -253,7 +258,7 @@ function mainController() {
             success: function (data) {
                 if (data.success) {
                     $("#editorModal").modal('close');
-                    self.userActiveBitBreaks.push(new bitBreaks(data.bitBreak));
+                    self.userActiveBitBreaks.push(new BitBreaks(data.bitBreak));
                 }
                 else
                     utility.showMessages(data.message);
@@ -299,6 +304,34 @@ function mainController() {
     self.cancelDeletion = function () {
         $("#promptModal").modal('close');
         self.potentiallyRemovableHabit = null;
+    };
+
+    self.markHabitCompleted = function (habitObject) {
+        var hash = habitObject.hash;
+
+        $.ajax({
+            type: 'PATCH',
+            contentType: 'application/json',
+            url: '/habits/endhabit/' + hash,
+            success: function (data) {
+                if (data.success) {
+                    self.userActiveBitBreaks.remove(habitObject);
+                    self.userEndedBitBreaks.push(new BitBreaks(data.bitBreak));
+                }
+                else {
+                    utility.showMessages(data.message);
+                }
+            },
+            endDate: function (error) {
+                utility.handleError(error);
+            }
+        });
+    };
+
+    self.showHabitDetails = function (habitObject) {
+        console.log(habitObject);
+        // TODO: Load a new page to display a calender.
+        // TODO: Give the ability to add a daily status
     };
 }
 

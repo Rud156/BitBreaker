@@ -275,10 +275,11 @@
                 </h5>
                 <!-- Start of active habits loop holder -->
                 <div class="masonry" data-bind="foreach: userActiveBitBreaks">
-                    <div class="masonry-item">
-                        <div class="card blue lighten-1 center white-text">
+                    <div class="masonry-item" data-bind="click: $root.showHabitDetails">
+                        <div class="card blue lighten-1 center white-text waves-effect waves-light">
                             <div class="card-content">
                                 <span class="right waves-effect waves-red" style="cursor: pointer" data-bind="click: $root.removeHabit"><i class="material-icons">delete</i></span>
+                                <span class="right waves-effect waves-red" style="cursor: pointer; margin-right: 3px" data-bind="click: $root.markHabitCompleted"><i class="material-icons">playlist_add_check</i></span>
                                 <span class="card-title" data-bind="text: title"></span>
                                 <div data-bind="html: description"></div>
                             </div>
@@ -307,6 +308,7 @@
                     <div class="masonry-item">
                         <div class="card blue lighten-1 center white-text">
                             <div class="card-content">
+                                <span class="right waves-effect waves-red" style="cursor: pointer" data-bind="click: $root.removeHabit"><i class="material-icons">delete</i></span>
                                 <span class="card-title" data-bind="text: title"></span>
                                 <div data-bind="html: description"></div>
                             </div>
