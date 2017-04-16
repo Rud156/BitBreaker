@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./stylesheets/fullcalendar.min.css" />
+    <link rel="stylesheet" href="./stylesheets/fullcalendar.print.css" media="print" />
     <link rel="stylesheet" href="./stylesheets/material_blue.css" />
     <link rel="stylesheet" href="./stylesheets/materialize.css" />
     <link rel="shortcut icon" type="image/x-icon" href="./images/icon.png" />
@@ -11,6 +13,8 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link rel="stylesheet" href="./CSS/Masonry.css" />
     <script src="./javascripts/jquery-3.1.1.js"></script>
+    <script src="./javascripts/moment.js"></script>
+    <script src="./javascripts/fullcalendar.min.js"></script>
     <script src="./javascripts/materialize.min.js"></script>
     <script src="./javascripts/knockout-3.4.2.js"></script>
     <script src="./javascripts/tinymce.min.js"></script>
@@ -266,7 +270,7 @@
         <div class="container" id="displayContainer">
 
             <!-- Start of Active Habit Holder -->
-            <div>
+            <div data-bind="ifnot: currentlySelectedHabit">
                 <h3 class="center">
                     Currently Active Habits:
                 </h3>
@@ -296,7 +300,7 @@
             <!-- End of Active Habit Holder -->
 
             <!-- Start of Ended or Expired Habit Holder -->
-            <div style="padding-top: 50px">
+            <div style="padding-top: 50px" data-bind="ifnot: currentlySelectedHabit">
                 <h3 class="center">
                     Ended Habits:
                 </h3>
@@ -318,6 +322,12 @@
                 <!-- End of ended habits loop holder -->
             </div>
             <!-- End of Ended or Expired Habit Holder -->
+
+            <!-- Start of calendar holder -->
+            <div data-bind="if: currentlySelectedHabit" style="padding-bottom: 30px;">
+                <div id="calendar"></div>
+            </div>
+            <!-- End of calendar holder -->
         </div>
 
         <!-- Start of Fixed Action Button -->

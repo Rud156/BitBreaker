@@ -119,9 +119,12 @@ function mainController() {
     var self = this;
 
     self.currentUser = ko.observable();
+
     self.userActiveBitBreaks = ko.observableArray();
     self.userEndedBitBreaks = ko.observableArray();
+
     self.currentlySelectedHabit = ko.observable();
+    self.events = [];
 
     self.potentiallyRemovableHabit = null;
 
@@ -329,7 +332,26 @@ function mainController() {
     };
 
     self.showHabitDetails = function (habitObject) {
-        console.log(habitObject);
+        self.currentlySelectedHabit(habitObject);
+
+
+        $("#calendar").fullCalendar({
+            header: {
+                left: 'prevYear,nextYear',
+                center: 'title',
+                right: 'today,prev,next'
+            }
+        });
+
+        for (var key in habitObject.dailyStatus) {
+            var dataSet = {
+                start: habitObject.startDate.getDate(),
+                end: habitObject.startDate.getData() + key,
+                description: habitObject.key.quote,
+                success: habitObject.key.success
+            };
+            self.events.push(dataSet);
+        }
         // TODO: Load a new page to display a calender.
         // TODO: Give the ability to add a daily status
     };
