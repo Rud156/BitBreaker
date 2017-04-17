@@ -107,6 +107,7 @@ function BitBreaks(habitObject) {
 
     this.foreverHabit = habitObject.foreverHabit;
 
+    // This will be of type array. Each day will be stored as an index of the array
     this.dailyStatus = habitObject.dailyStatus;
     this.ended = habitObject.ended;
 
@@ -365,16 +366,6 @@ function mainController() {
         });
 
         // $("#calendar").fullCalendar('destory');
-
-        for (var key in habitObject.dailyStatus) {
-            var dataSet = {
-                start: habitObject.startDate.getDate(),
-                end: habitObject.startDate.getData() + key,
-                description: habitObject.key.quote,
-                success: habitObject.key.success
-            };
-            self.events.push(dataSet);
-        }
         // TODO: Load a new page to display a calender.
         // TODO: Give the ability to add a daily status
     };

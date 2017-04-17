@@ -26,7 +26,10 @@ var habitSchema = mongoose.Schema({
     totalDays: Number,
     ended: Boolean,
     foreverHabit: Boolean,
-    dailyStatus: {}
+    dailyStatus: [{
+        success: Boolean,
+        quote: String
+    }]
 });
 
 module.exports = {

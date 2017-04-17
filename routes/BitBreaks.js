@@ -2,30 +2,35 @@ var express = require('express');
 var router = express.Router();
 
 var crypto = require('crypto');
+
 var Model = require('./model');
+var utilities = require('./utilities');
 
 
-router.get('/all', checkAuthentication, function (req, res, next) {
+router.get('/all', utilities.checkAuthentication, function (req, res, next) {
     Model.BitBreaks.find({ username: res.locals.user.username }, function (err, bitBreaks) {
         if (err)
             throw err;
+        bitBreaks = utilities.setHabitDates(bitBreaks);
         return res.json({ success: true, message: 'Found all habits of current user', bitBreaks: bitBreaks });
     });
 });
 
-router.get('/one/:hash', checkAuthentication, function (req, res, next) {
+router.get('/one/:hash', utilities.checkAuthentication, function (req, res, next) {
     var hash = req.params.hash;
     Model.BitBreaks.findOne({ hash: hash }, function (err, bitBreakObject) {
         if (err)
             throw err;
         if (!bitBreakObject)
             return res.json({ success: false, message: 'Invalid habit requested' });
-        else
+        else {
+            bitBreakObject = utilities.setHabitDate(bitBreakObject);
             return res.json({ success: true, message: 'Habit successfully found', bitBreak: bitBreakObject });
+        }
     });
 });
 
-router.patch('/one/:hash', checkAuthentication, function (req, res, next) {
+router.patch('/one/:hash', utilities.checkAuthentication, function (req, res, next) {
     var success = req.body.success;
     var dayQuote = req.body.dayQuote;
     var setDate = req.body.setDate;
@@ -46,16 +51,20 @@ router.patch('/one/:hash', checkAuthentication, function (req, res, next) {
                 return res.json({ success: false, message: 'You cannot update an ended habit' });
 
             // TODO: Calculate date diffrence on the front end and supply it
-
+            
+            // TODO: Change the logic to handle date diffrence that is sent by the user front end
+            // The date diffrence is calculated with repect to today
             var dateDiff = setDate;
             if (dateDiff > 0)
                 return res.json({ success: false, message: 'You cannot edit a date in the future' });
             else if (dateDiff < -3)
                 return res.json({ success: false, message: 'You cannot edit more than 3 days in the past' });
+            else
+                return res.json({ success: false, message: "Invalid date diffrence structure" });
 
             var dailyStatus = bitBreakObject.dailyStatus;
             if (dailyStatus === undefined) {
-                bitBreakObject.dailyStatus = {};
+                bitBreakObject.dailyStatus = [];
             }
             bitBreakObject.dailyStatus[dateDiff] = { success: success, quote: dayQuote };
             bitBreakObject.save(function (err, updatedObject) {
@@ -69,7 +78,7 @@ router.patch('/one/:hash', checkAuthentication, function (req, res, next) {
     });
 });
 
-router.patch('/endhabit/:hash', checkAuthentication, function (req, res, next) {
+router.patch('/endhabit/:hash', utilities.checkAuthentication, function (req, res, next) {
     var hash = req.params.hash;
     Model.BitBreaks.findOne({ hash: hash }, function (err, bitObject) {
         if (err)
@@ -90,7 +99,7 @@ router.patch('/endhabit/:hash', checkAuthentication, function (req, res, next) {
     });
 });
 
-router.post('/save', checkAuthentication, function (req, res, next) {
+router.post('/save', utilities.checkAuthentication, function (req, res, next) {
     var title = req.body.title;
     var description = req.body.description;
     var startDate = req.body.startDate;
@@ -98,7 +107,7 @@ router.post('/save', checkAuthentication, function (req, res, next) {
     var forever = req.body.forever;
     var username = req.body.username;
 
-    var dailyStatus = {};
+    var dailyStatus = [];
     var ended = false;
 
     // TODO: After building front end change typeof(startDate) to 'object'
@@ -167,14 +176,5 @@ router.delete('/delete/:hash', function (req, res, next) {
         });
     });
 });
-
-
-function checkAuthentication(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-    else {
-        return res.json({ success: false, message: 'User is not logged in' });
-    }
-}
 
 module.exports = router;
