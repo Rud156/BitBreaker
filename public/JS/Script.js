@@ -339,9 +339,32 @@ function mainController() {
             header: {
                 left: 'prevYear,nextYear',
                 center: 'title',
-                right: 'today,prev,next'
-            }
+                right: 'today prev,next'
+            },
+            eventStartEditable: false,
+            eventDurationEditable: false,
+            eventClick: function (calEvent, jsEvent, view) {
+                // Load a custom modal to display details
+                // If editable, load the modal to add the editable data
+                console.log(calEvent, jsEvent, view);
+            },
+            events: [
+                {
+                    title: 'Some Title',
+                    start: '2017-04-17',
+                    description: 'Some Description',
+                    color: 'red'
+                },
+                {
+                    title: 'Some Title',
+                    start: '2017-05-17',
+                    description: 'Some Description',
+                    color: 'red'
+                },
+            ]
         });
+
+        // $("#calendar").fullCalendar('destory');
 
         for (var key in habitObject.dailyStatus) {
             var dataSet = {
