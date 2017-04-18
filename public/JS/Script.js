@@ -1,6 +1,7 @@
 /// <reference path="./../javascripts/jquery.d.ts" />
 /// <reference path="./../javascripts/knockoutJS.d.ts" />
 /// <reference path="./../javascripts/SammyJS.d.ts" />
+/// <reference path="./../../routes/utilities.js" />
 
 // Start of default initializations
 flatpickr('.flatpickr');
@@ -20,6 +21,7 @@ tinymce.init({
 });
 // End of default initializations
 
+// Start of utility functions
 function utilityFunction() {
     this.handleError = function (error) {
         console.log(error);
@@ -43,14 +45,10 @@ function utilityFunction() {
     this.endingDate = function (startDate, totalDays) {
         var oneDay = 24 * 60 * 60 * 1000;
 
-        var todayDate = new Date();
-        todayDate.setUTCHours(0, 0, 0, 0);
+        var tempDate = new Date(startDate.getTime());
+        tempDate.setDate(startDate.getDate() + totalDays);
 
-        var dateDiff = Math.round(Math.abs((startDate.getTime() - todayDate.getTime()) / oneDay));
-        totalDays -= dateDiff;
-
-        todayDate.setDate(todayDate.getDate() + totalDays);
-        return todayDate;
+        return tempDate;
     };
 
     this.daysLeft = function (startDate, totalDays) {
@@ -72,7 +70,10 @@ function utilityFunction() {
     };
 }
 var utility = new utilityFunction();
+// End of utility functions
 
+
+// Start of loading the quotes on the homepage
 function getAndSetQuote(quoteBody, quoteAuthor) {
     $.ajax({
         dataType: 'json',
@@ -87,17 +88,19 @@ function getAndSetQuote(quoteBody, quoteAuthor) {
         }
     });
 }
+// End of function to load quotes on the homepage
 
 var quoteBodies = document.getElementsByClassName('quoteBody');
 var quoteAuthors = document.getElementsByClassName('quoteAuthor');
 for (var i = 0; i < quoteBodies.length; i++)
     getAndSetQuote(quoteBodies[i], quoteAuthors[i]);
 
-
+// Helper function to format the username
 function loggedUser(userObject) {
     this.userName = utility.stringToTitleCase(userObject.username);
 }
 
+// Helper function to hold the habits in a standerd format
 function BitBreaks(habitObject) {
     this.hash = habitObject.hash;
     this.title = utility.stringToTitleCase(habitObject.title);
@@ -115,7 +118,10 @@ function BitBreaks(habitObject) {
     this.daysLeft = utility.daysLeft(this.startDate, habitObject.totalDays);
     this.endDate = utility.endingDate(this.startDate, habitObject.totalDays);
 }
+// End of habit helper function
 
+
+// Start of main controller
 function mainController() {
     var self = this;
 
@@ -125,10 +131,10 @@ function mainController() {
     self.userEndedBitBreaks = ko.observableArray();
 
     self.currentlySelectedHabit = ko.observable();
-    self.events = [];
 
     self.potentiallyRemovableHabit = null;
 
+    // Login user function
     self.loginUser = function () {
         var userName = document.getElementById('loginUsername').value.trim();
         var password = document.getElementById('loginPassword').value.trim();
@@ -158,6 +164,7 @@ function mainController() {
         });
     };
 
+    // Registering user function
     self.registerUser = function () {
         var userName = document.getElementById('registerUsername').value.trim();
         var password = document.getElementById('registerPassword').value.trim();
@@ -193,6 +200,7 @@ function mainController() {
         });
     };
 
+    // Get all habits of the user
     self.getUserHabits = function () {
         $.ajax({
             url: '/habits/all',
@@ -202,6 +210,7 @@ function mainController() {
                     var activeBitBreaks = [];
                     var endedBitBreaks = [];
                     data.bitBreaks.forEach(function (value) {
+                        // Condition to check if the habit has ended of not
                         if (value.ended) {
                             endedBitBreaks.push(new BitBreaks(value));
                         }
@@ -222,6 +231,9 @@ function mainController() {
         });
     };
 
+    // Function to save the entered user habit
+    // URI encode the description before sending it to prevent garbled form
+    // Basic conditional checks
     self.saveNewHabit = function () {
         var title = document.getElementById('bitTitle').value.trim();
         var description = iFrame.document.body.innerHTML;
@@ -243,6 +255,7 @@ function mainController() {
         endDate = new Date(endDate);
 
         var totalDays = -1;
+        // If the forever button is not checked calculate the total days left til ending
         if (!foreverCheck)
             totalDays = utility.dateDiff(startDate, endDate);
 
@@ -273,11 +286,13 @@ function mainController() {
         });
     };
 
+    // Function to accept prompt from user to remove a habit
     self.removeHabit = function (habitObject) {
         self.potentiallyRemovableHabit = habitObject;
         $("#promptModal").modal('open');
     };
 
+    // Confirm deletion of habit
     self.deleteHabit = function () {
         $("#promptModal").modal('close');
         if (self.potentiallyRemovableHabit === null) {
@@ -305,11 +320,13 @@ function mainController() {
         });
     };
 
+    // Function to cancel deletion of the habit
     self.cancelDeletion = function () {
         $("#promptModal").modal('close');
         self.potentiallyRemovableHabit = null;
     };
 
+    // Function to mark the selected habit as completed
     self.markHabitCompleted = function (habitObject) {
         var hash = habitObject.hash;
 
@@ -332,8 +349,29 @@ function mainController() {
         });
     };
 
+    // Function to show the habit details on a calender
     self.showHabitDetails = function (habitObject) {
         self.currentlySelectedHabit(habitObject);
+
+        var events = [];
+        var startDate = habitObject.startDate;
+        for (var i = 0; i < habitObject.dailyStatus.length; i++) {
+            var color;
+            if (habitObject.dailyStatus[i].success)
+                color = 'green';
+            else
+                color = 'red';
+
+            var start = new Date(startDate.getTime());
+            start.setDate(startDate.getDate() + i);
+
+            var dataSet = {
+                color: color,
+                title: habitObject.dailyStatus[i].quote,
+                start: start
+            };
+            events.push(dataSet);
+        }
 
 
         $("#calendar").fullCalendar({
@@ -349,20 +387,7 @@ function mainController() {
                 // If editable, load the modal to add the editable data
                 console.log(calEvent, jsEvent, view);
             },
-            events: [
-                {
-                    title: 'Some Title',
-                    start: '2017-04-17',
-                    description: 'Some Description',
-                    color: 'red'
-                },
-                {
-                    title: 'Some Title',
-                    start: '2017-05-17',
-                    description: 'Some Description',
-                    color: 'red'
-                },
-            ]
+            events: events
         });
 
         // $("#calendar").fullCalendar('destory');
