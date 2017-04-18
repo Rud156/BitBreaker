@@ -4,7 +4,7 @@ var router = express.Router();
 var crypto = require('crypto');
 
 var Model = require('./model');
-var utilities = require('./utilities');
+var utilities = require('./../helpers/utilities');
 
 
 router.get('/all', utilities.checkAuthentication, function (req, res, next) {
@@ -50,10 +50,7 @@ router.patch('/one/:hash', utilities.checkAuthentication, function (req, res, ne
             if (bitBreakObject.ended)
                 return res.json({ success: false, message: 'You cannot update an ended habit' });
 
-            // TODO: Calculate date diffrence on the front end and supply it
-
-            // TODO: Change the logic to handle date diffrence that is sent by the user front end
-            // The date difference is calculated with repect to today
+            
             var dateDiff = setDate;
             if (dateDiff > 0)
                 return res.json({ success: false, message: 'You cannot edit a date in the future' });

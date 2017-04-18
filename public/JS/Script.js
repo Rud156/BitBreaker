@@ -1,10 +1,13 @@
 /// <reference path="./../javascripts/jquery.d.ts" />
 /// <reference path="./../javascripts/knockoutJS.d.ts" />
 /// <reference path="./../javascripts/SammyJS.d.ts" />
-/// <reference path="./../../routes/utilities.js" />
+/// <reference path="./../../helpers/utilities.js" />
+
+// TODO: Add routing
 
 // Start of default initializations
 flatpickr('.flatpickr');
+
 var iFrame = null;
 tinymce.init({
     selector: "#bitDescription",
@@ -22,54 +25,19 @@ tinymce.init({
 // End of default initializations
 
 // Start of utility functions
-function utilityFunction() {
+function MessagesFunction() {
     this.handleError = function (error) {
         console.log(error);
         $("#alertModal").modal('open');
         document.getElementById('alertModalContent').innerText = "Error Occurred.";
     };
 
-    this.stringToTitleCase = function (baseString) {
-        baseString = baseString.toLowerCase().split(' ');
-        for (var i = 0; i < baseString.length; i++) {
-            baseString[i] = baseString[i].charAt(0).toUpperCase() + baseString[i].slice(1);
-        }
-        return baseString.join(' ');
-    };
-
     this.showMessages = function (message) {
         $("#alertModal").modal('open');
         document.getElementById('alertModalContent').innerText = message;
     };
-
-    this.endingDate = function (startDate, totalDays) {
-        var oneDay = 24 * 60 * 60 * 1000;
-
-        var tempDate = new Date(startDate.getTime());
-        tempDate.setDate(startDate.getDate() + totalDays);
-
-        return tempDate;
-    };
-
-    this.daysLeft = function (startDate, totalDays) {
-        var oneDay = 24 * 60 * 60 * 1000;
-
-        var todayDate = new Date();
-        todayDate.setUTCHours(0, 0, 0, 0);
-
-        var dateDiff = Math.round(Math.abs((startDate.getTime() - todayDate.getTime()) / oneDay));
-        totalDays -= dateDiff;
-
-        return totalDays;
-    };
-
-    this.dateDiff = function (startDate, endDate) {
-        var oneDay = 24 * 60 * 60 * 1000;
-        var dateDiff = Math.round(Math.abs((startDate.getTime() - endDate.getTime()) / oneDay));
-        return dateDiff;
-    };
 }
-var utility = new utilityFunction();
+var messageUtility = new MessagesFunction();
 // End of utility functions
 
 
@@ -84,7 +52,7 @@ function getAndSetQuote(quoteBody, quoteAuthor) {
             quoteAuthor.innerText = '--- ' + data.author_name;
         },
         error: function (error) {
-            utility.handleError(error);
+            messageUtility.handleError(error);
         }
     });
 }
@@ -95,15 +63,16 @@ var quoteAuthors = document.getElementsByClassName('quoteAuthor');
 for (var i = 0; i < quoteBodies.length; i++)
     getAndSetQuote(quoteBodies[i], quoteAuthors[i]);
 
-// Helper function to format the username
+// Helper function to format and store username
 function loggedUser(userObject) {
-    this.userName = utility.stringToTitleCase(userObject.username);
+    this.userName = utilityFunctions.stringToTitleCase(userObject.username);
 }
+// End of helper function to format and store username
 
-// Helper function to hold the habits in a standerd format
+// Helper function to hold the habits in a standard format
 function BitBreaks(habitObject) {
     this.hash = habitObject.hash;
-    this.title = utility.stringToTitleCase(habitObject.title);
+    this.title = utilityFunctions.stringToTitleCase(habitObject.title);
     this.description = decodeURI(habitObject.description);
     this.startDate = new Date(habitObject.startDate);
     this.totalDays = habitObject.totalDays;
@@ -115,10 +84,21 @@ function BitBreaks(habitObject) {
     this.ended = habitObject.ended;
 
     // These will give incorrect values if forever habit is checked. Basically -ve values...
-    this.daysLeft = utility.daysLeft(this.startDate, habitObject.totalDays);
-    this.endDate = utility.endingDate(this.startDate, habitObject.totalDays);
+    this.daysLeft = utilityFunctions.daysLeft(this.startDate, habitObject.totalDays);
+    this.endDate = utilityFunctions.endingDate(this.startDate, habitObject.totalDays);
 }
 // End of habit helper function
+
+// Function to create dates specific to fullCalendar.io
+function CalendarDates(dailyData, startDate, index) {
+    this.title = dailyData.quote;
+    this.color = dailyData.success === false ? 'red' : 'green';
+    this.success = dailyData.success;
+
+    this.start = new Date(startDate.getTime());
+    this.start.setDate(startDate.getDate() + index);
+}
+// End of function to create dats specific to fullCalendar.io
 
 
 // Start of main controller
@@ -139,7 +119,7 @@ function mainController() {
         var userName = document.getElementById('loginUsername').value.trim();
         var password = document.getElementById('loginPassword').value.trim();
         if (userName === '' || password === '') {
-            utility.showMessages("Fields cannot be blank!!!");
+            messageUtility.showMessages("Fields cannot be blank!!!");
             return;
         }
 
@@ -155,11 +135,11 @@ function mainController() {
                     self.getUserHabits();
                 }
                 else {
-                    utility.showMessages(data.message);
+                    messageUtility.showMessages(data.message);
                 }
             },
             error: function (error) {
-                utility.handleError(error);
+                messageUtility.handleError(error);
             }
         });
     };
@@ -171,11 +151,11 @@ function mainController() {
         var rePassword = document.getElementById('registerRePassword').value.trim();
 
         if (userName === '' || password === '' || rePassword === '') {
-            utility.showMessages('Fields cannot be blank!!!');
+            messageUtility.showMessages('Fields cannot be blank!!!');
             return;
         }
         if (password !== rePassword) {
-            utility.showMessages('Passwords do not match. Please check them...');
+            messageUtility.showMessages('Passwords do not match. Please check them...');
             return;
         }
 
@@ -191,11 +171,11 @@ function mainController() {
                     self.getUserHabits();
                 }
                 else {
-                    utility.showMessages(data.message);
+                    messageUtility.showMessages(data.message);
                 }
             },
             error: function (error) {
-                utility.handleError(error);
+                messageUtility.handleError(error);
             }
         });
     };
@@ -211,22 +191,20 @@ function mainController() {
                     var endedBitBreaks = [];
                     data.bitBreaks.forEach(function (value) {
                         // Condition to check if the habit has ended of not
-                        if (value.ended) {
+                        if (value.ended)
                             endedBitBreaks.push(new BitBreaks(value));
-                        }
-                        else {
+                        else
                             activeBitBreaks.push(new BitBreaks(value));
-                        }
                     });
                     self.userActiveBitBreaks(activeBitBreaks);
                     self.userEndedBitBreaks(endedBitBreaks);
                 }
                 else {
-                    utility.showMessages(data.message);
+                    messageUtility.showMessages(data.message);
                 }
             },
             error: function () {
-                utility.handleError(error);
+                messageUtility.handleError(error);
             }
         });
     };
@@ -241,11 +219,11 @@ function mainController() {
         var foreverCheck = document.getElementById('foreverCheck').checked;
 
         if (endDate === '' && foreverCheck === false) {
-            utility.showMessages('You cannot leave both end date and forever checkbox blank. Please select either one...');
+            messageUtility.showMessages('You cannot leave both end date and forever checkbox blank. Please select either one...');
             return;
         }
         if (title === '') {
-            utility.showMessages('Please enter a title to continue...');
+            messageUtility.showMessages('Please enter a title to continue...');
             return;
         }
         description = encodeURI(description);
@@ -257,7 +235,7 @@ function mainController() {
         var totalDays = -1;
         // If the forever button is not checked calculate the total days left til ending
         if (!foreverCheck)
-            totalDays = utility.dateDiff(startDate, endDate);
+            totalDays = utilityFunctions.dateDiff(startDate, endDate);
 
         var dataSet = {
             title: title,
@@ -278,10 +256,10 @@ function mainController() {
                     self.userActiveBitBreaks.push(new BitBreaks(data.bitBreak));
                 }
                 else
-                    utility.showMessages(data.message);
+                    messageUtility.showMessages(data.message);
             },
             error: function (error) {
-                utility.handleError(error);
+                messageUtility.handleError(error);
             }
         });
     };
@@ -296,7 +274,7 @@ function mainController() {
     self.deleteHabit = function () {
         $("#promptModal").modal('close');
         if (self.potentiallyRemovableHabit === null) {
-            utility.showMessages("No habit marked for deletion!!! You're not playing fair!!!");
+            messageUtility.showMessages("No habit marked for deletion!!! You're not playing fair!!!");
             return;
         }
         var hash = self.potentiallyRemovableHabit.hash;
@@ -311,11 +289,11 @@ function mainController() {
                     self.potentiallyRemovableHabit = null;
                 }
                 else {
-                    utility.showMessages(data.message);
+                    messageUtility.showMessages(data.message);
                 }
             },
             error: function (error) {
-                utility.handleError(error);
+                messageUtility.handleError(error);
             }
         });
     };
@@ -340,11 +318,11 @@ function mainController() {
                     self.userEndedBitBreaks.push(new BitBreaks(data.bitBreak));
                 }
                 else {
-                    utility.showMessages(data.message);
+                    messageUtility.showMessages(data.message);
                 }
             },
             endDate: function (error) {
-                utility.handleError(error);
+                messageUtility.handleError(error);
             }
         });
     };
@@ -391,7 +369,6 @@ function mainController() {
         });
 
         // $("#calendar").fullCalendar('destory');
-        // TODO: Load a new page to display a calender.
         // TODO: Give the ability to add a daily status
     };
 }
