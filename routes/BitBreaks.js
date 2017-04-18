@@ -51,27 +51,40 @@ router.patch('/one/:hash', utilities.checkAuthentication, function (req, res, ne
                 return res.json({ success: false, message: 'You cannot update an ended habit' });
 
             // TODO: Calculate date diffrence on the front end and supply it
-            
+
             // TODO: Change the logic to handle date diffrence that is sent by the user front end
-            // The date diffrence is calculated with repect to today
+            // The date difference is calculated with repect to today
             var dateDiff = setDate;
             if (dateDiff > 0)
                 return res.json({ success: false, message: 'You cannot edit a date in the future' });
             else if (dateDiff < -3)
                 return res.json({ success: false, message: 'You cannot edit more than 3 days in the past' });
-            else
+            else if (typeof (dateDiff) !== 'number')
                 return res.json({ success: false, message: "Invalid date diffrence structure" });
+
+            var today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+
+            today = utilities.endingDate(today, dateDiff);
+            dateDiff = utilities.dateDiff(bitBreakObject.startDate, today);
+
+            if (today.getTime() < bitBreakObject.startDate)
+                return res.json({ success: false, message: 'Data cannot be editied for time before the starting date' });
 
             var dailyStatus = bitBreakObject.dailyStatus;
             if (dailyStatus === undefined) {
                 bitBreakObject.dailyStatus = [];
             }
+
             bitBreakObject.dailyStatus[dateDiff] = { success: success, quote: dayQuote };
             bitBreakObject.save(function (err, updatedObject) {
                 if (err)
                     throw err;
                 if (!updatedObject)
                     return res.json({ success: false, message: 'Invalid habit was specified' });
+
+                updatedObject = utilities.setHabitDate(updatedObject);
+
                 return res.json({ success: true, message: 'Habit successfully updated', bitBreak: updatedObject });
             });
         }

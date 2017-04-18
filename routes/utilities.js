@@ -12,6 +12,11 @@ function dateDiff(startDate, endDate) {
     return dateDiff;
 }
 
+function endingDate(startDate, noOfDays) {
+    startDate.setDate(startDate.getDate() + noOfDays);
+    return startDate;
+}
+
 function setHabitDates(userHabits) {
     var today = new Date();
     today.setUTCHours(0, 0, 0, 0);
@@ -21,24 +26,26 @@ function setHabitDates(userHabits) {
 
         var totalDays = currentHabit.totalDays;
         var startDate = currentHabit.startDate;
-        var currentDateDiffrence = dateDiff(startDate, today);
+        var currentDateDifference = dateDiff(startDate, today);
         var i;
 
         if (totalDays != -1) {
-            for (i = 0; i <= currentDateDiffrence, i <= totalDays; i++) {
+            i = 0;
+            while (i <= currentDateDifference && i <= totalDays) {
                 if (!dailyStatus[i]) {
                     dailyStatus[i] = {};
                     dailyStatus[i].success = false;
-                    dailyStatus[i].quote = "You didn't put anything today";
+                    dailyStatus[i].quote = "You didn't put anything for this day";
                 }
+                i++;
             }
         }
         else {
-            for (i = 0; i <= currentDateDiffrence; i++) {
+            for (i = 0; i <= currentDateDifference; i++) {
                 if (!dailyStatus[i]) {
                     dailyStatus[i] = {};
                     dailyStatus[i].success = false;
-                    dailyStatus[i].quote = "You didn't put anything today";
+                    dailyStatus[i].quote = "You didn't put anything for this day";
                 }
             }
         }
@@ -58,12 +65,14 @@ function setHabitDate(userHabit) {
     var i;
 
     if (totalDays != -1) {
-        for (i = 0; i <= currentDateDiffrence, i <= totalDays; i++) {
+        i = 0;
+        while (i <= currentDateDiffrence && i <= totalDays) {
             if (!dailyStatus[i]) {
                 dailyStatus[i] = {};
                 dailyStatus[i].success = false;
-                dailyStatus[i].quote = "You didn't put anything today";
+                dailyStatus[i].quote = "You didn't put anything for this day";
             }
+            i++;
         }
     }
     else {
@@ -71,15 +80,18 @@ function setHabitDate(userHabit) {
             if (!dailyStatus[i]) {
                 dailyStatus[i] = {};
                 dailyStatus[i].success = false;
-                dailyStatus[i].quote = "You didn't put anything today";
+                dailyStatus[i].quote = "You didn't put anything for this day";
             }
         }
     }
+    return userHabit;
 }
 
 
 module.exports = {
     checkAuthentication: checkAuthentication,
     setHabitDates: setHabitDates,
-    setHabitDate: setHabitDate
+    setHabitDate: setHabitDate,
+    endingDate: endingDate,
+    dateDiff: dateDiff
 };
