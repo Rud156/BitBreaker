@@ -97,6 +97,7 @@ function CalendarDates(dailyData, startDate, index) {
 
     this.start = new Date(startDate.getTime());
     this.start.setDate(startDate.getDate() + index);
+    this.start = this.start.toISOString();
 }
 // End of function to create dats specific to fullCalendar.io
 
@@ -182,31 +183,7 @@ function mainController() {
 
     // Get all habits of the user
     self.getUserHabits = function () {
-        $.ajax({
-            url: '/habits/all',
-            type: 'GET',
-            success: function (data) {
-                if (data.success) {
-                    var activeBitBreaks = [];
-                    var endedBitBreaks = [];
-                    data.bitBreaks.forEach(function (value) {
-                        // Condition to check if the habit has ended of not
-                        if (value.ended)
-                            endedBitBreaks.push(new BitBreaks(value));
-                        else
-                            activeBitBreaks.push(new BitBreaks(value));
-                    });
-                    self.userActiveBitBreaks(activeBitBreaks);
-                    self.userEndedBitBreaks(endedBitBreaks);
-                }
-                else {
-                    messageUtility.showMessages(data.message);
-                }
-            },
-            error: function () {
-                messageUtility.handleError(error);
-            }
-        });
+        location.hash = '/dashboard';
     };
 
     // Function to save the entered user habit
@@ -329,48 +306,109 @@ function mainController() {
 
     // Function to show the habit details on a calender
     self.showHabitDetails = function (habitObject) {
-        self.currentlySelectedHabit(habitObject);
+        location.hash = '/habit/' + habitObject.hash;
+    };
 
-        var events = [];
-        var startDate = habitObject.startDate;
-        for (var i = 0; i < habitObject.dailyStatus.length; i++) {
-            var color;
-            if (habitObject.dailyStatus[i].success)
-                color = 'green';
-            else
-                color = 'red';
+    Sammy(function () {
+        this.get('/dashboard', function () {
+            self.currentlySelectedHabit(null);
+            self.userActiveBitBreaks.removeAll();
+            self.userEndedBitBreaks.removeAll();
+            
+            $("#calendar").fullCalendar('destory');
 
-            var start = new Date(startDate.getTime());
-            start.setDate(startDate.getDate() + i);
-
-            var dataSet = {
-                color: color,
-                title: habitObject.dailyStatus[i].quote,
-                start: start
-            };
-            events.push(dataSet);
-        }
-
-
-        $("#calendar").fullCalendar({
-            header: {
-                left: 'prevYear,nextYear',
-                center: 'title',
-                right: 'today prev,next'
-            },
-            eventStartEditable: false,
-            eventDurationEditable: false,
-            eventClick: function (calEvent, jsEvent, view) {
-                // Load a custom modal to display details
-                // If editable, load the modal to add the editable data
-                console.log(calEvent, jsEvent, view);
-            },
-            events: events
+            $.ajax({
+                url: '/habits/all',
+                type: 'GET',
+                success: function (data) {
+                    if (data.success) {
+                        var activeBitBreaks = [];
+                        var endedBitBreaks = [];
+                        data.bitBreaks.forEach(function (value) {
+                            // Condition to check if the habit has ended of not
+                            if (value.ended)
+                                endedBitBreaks.push(new BitBreaks(value));
+                            else
+                                activeBitBreaks.push(new BitBreaks(value));
+                        });
+                        self.userActiveBitBreaks(activeBitBreaks);
+                        self.userEndedBitBreaks(endedBitBreaks);
+                    }
+                    else {
+                        messageUtility.showMessages(data.message);
+                    }
+                },
+                error: function () {
+                    messageUtility.handleError(error);
+                }
+            });
         });
 
-        // $("#calendar").fullCalendar('destory');
-        // TODO: Give the ability to add a daily status
-    };
+        this.get('/habit/:hash', function () {
+            $.ajax({
+                type: 'GET',
+                url: '/habits/one/' + this.params.hash,
+                success: function (data) {
+                    
+                    $("#calendar").fullCalendar('destory');
+                    
+                    if (data.success) {
+                        self.currentlySelectedHabit(new BitBreaks(data.bitBreak));
+                        var events = [];
+                        var startDate = self.currentlySelectedHabit().startDate;
+                        for (var i = 0; i < self.currentlySelectedHabit().dailyStatus.length; i++)
+                            events.push(new CalendarDates(self.currentlySelectedHabit().dailyStatus[i], self.currentlySelectedHabit().startDate, i));
+                        console.log(events);
+
+                        $("#calendar").fullCalendar({
+                            header: {
+                                left: 'prevYear,nextYear',
+                                center: 'title',
+                                right: 'today prev,next'
+                            },
+                            eventStartEditable: false,
+                            eventDurationEditable: false,
+                            eventClick: function (calEvent, jsEvent, view) {
+                                // Load a custom modal to display details
+                                // If editable, load the modal to add the editable data
+                                console.log(calEvent, jsEvent, view);
+                            },
+                            events: [
+                                {
+                                    title: 'This is some text',
+                                    color: 'green',
+                                    start: '2017-04-15',
+                                },
+                                {
+                                    title: 'This is some mote text',
+                                    color: 'green',
+                                    start: '2017-04-16',
+                                },
+                                {
+                                    title: 'This is a text',
+                                    color: 'red',
+                                    start: '2017-04-17',
+                                },
+                                {
+                                    title: 'This is some',
+                                    color: 'green',
+                                    start: '2017-04-18',
+                                }
+                            ]
+                        });
+                    }
+                    else
+                        messageUtility.showMessages(data.message);
+                },
+                error: function (error) {
+                    messageUtility.handleError(error);
+                }
+            });
+
+            // $("#calendar").fullCalendar('destory');
+            // TODO: Give the ability to add a daily status
+        });
+    }).run();
 }
 
 ko.applyBindings(new mainController());

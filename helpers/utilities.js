@@ -80,7 +80,7 @@
 
         if (totalDays != -1) {
             i = 0;
-            while (i <= currentDateDiffrence && i <= totalDays) {
+            while (i <= currentDateDifference && i <= totalDays) {
                 if (!dailyStatus[i]) {
                     dailyStatus[i] = {};
                     dailyStatus[i].success = false;
@@ -90,7 +90,7 @@
             }
         }
         else {
-            for (i = 0; i <= currentDateDiffrence; i++) {
+            for (i = 0; i <= currentDateDifference; i++) {
                 if (!dailyStatus[i]) {
                     dailyStatus[i] = {};
                     dailyStatus[i].success = false;
