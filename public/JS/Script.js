@@ -335,6 +335,7 @@ function mainController() {
                         self.userEndedBitBreaks(endedBitBreaks);
                     }
                     else {
+                        location.hash = '/';
                         messageUtility.showMessages(data.message);
                     }
                 },
@@ -358,10 +359,8 @@ function mainController() {
                     if (data.success) {
                         self.currentlySelectedHabit(new BitBreaks(data.bitBreak));
                         var events = [];
-                        console.log(self.currentlySelectedHabit());
                         for (var i = 0; i < self.currentlySelectedHabit().dailyStatus.length; i++)
                             events.push(new CalendarDates(self.currentlySelectedHabit().dailyStatus[i], self.currentlySelectedHabit().startDate, i));
-                        console.log(events);
 
                         $("#calendar").fullCalendar({
                             header: {
