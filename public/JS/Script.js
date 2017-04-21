@@ -2,6 +2,7 @@
 /// <reference path="./../javascripts/knockoutJS.d.ts" />
 /// <reference path="./../javascripts/SammyJS.d.ts" />
 /// <reference path="./../../helpers/utilities.js" />
+/// <reference path="./../javascripts/page.js" />
 
 // TODO: Add routing
 
@@ -311,9 +312,6 @@ function mainController() {
 
     Sammy(function () {
         this.get('/dashboard', function () {
-            self.currentlySelectedHabit(null);
-            self.userActiveBitBreaks.removeAll();
-            self.userEndedBitBreaks.removeAll();
 
             $("#calendar").fullCalendar('destory');
 
@@ -321,6 +319,10 @@ function mainController() {
                 url: '/habits/all',
                 type: 'GET',
                 success: function (data) {
+                    self.currentlySelectedHabit(null);
+                    self.userActiveBitBreaks.removeAll();
+                    self.userEndedBitBreaks.removeAll();
+
                     if (data.success) {
                         var activeBitBreaks = [];
                         var endedBitBreaks = [];
@@ -335,7 +337,7 @@ function mainController() {
                         self.userEndedBitBreaks(endedBitBreaks);
                     }
                     else {
-                        location.hash = '/';
+                        location.hash = '';
                         messageUtility.showMessages(data.message);
                     }
                 },
@@ -346,13 +348,14 @@ function mainController() {
         });
 
         this.get('/habit/:hash', function () {
-            self.userActiveBitBreaks.removeAll();
-            self.userEndedBitBreaks.removeAll();
 
             $.ajax({
                 type: 'GET',
                 url: '/habits/one/' + this.params.hash,
                 success: function (data) {
+
+                    self.userActiveBitBreaks.removeAll();
+                    self.userEndedBitBreaks.removeAll();
 
                     $("#calendar").fullCalendar('destory');
 
@@ -378,12 +381,13 @@ function mainController() {
                             events: events
                         });
                     }
-                    else{
+                    else {
                         location.hash = '/dashboard';
                         messageUtility.showMessages(data.message);
                     }
                 },
                 error: function (error) {
+                    location.hash = '/dashboard';
                     messageUtility.handleError(error);
                 }
             });
@@ -391,7 +395,31 @@ function mainController() {
             // $("#calendar").fullCalendar('destory');
             // TODO: Give the ability to add a daily status
         });
+
+        this.get('', function () {
+            if (self.currentUser()) {
+                location.hash = '/dashboard';
+            }
+            else {
+                self.currentlySelectedHabit(null);
+                self.userActiveBitBreaks.removeAll();
+                self.userEndedBitBreaks.removeAll();
+            }
+        });
+
+        this.get('/', function () {
+            if (self.currentUser()) {
+                location.hash = '/dashboard';
+            }
+            else {
+                self.currentlySelectedHabit(null);
+                self.userActiveBitBreaks.removeAll();
+                self.userEndedBitBreaks.removeAll();
+            }
+        });
     }).run();
+
+    location.hash = ''
 }
 
 ko.applyBindings(new mainController());
