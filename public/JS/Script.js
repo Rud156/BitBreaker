@@ -378,8 +378,10 @@ function mainController() {
                             events: events
                         });
                     }
-                    else
+                    else{
+                        location.hash = '/dashboard';
                         messageUtility.showMessages(data.message);
+                    }
                 },
                 error: function (error) {
                     messageUtility.handleError(error);
