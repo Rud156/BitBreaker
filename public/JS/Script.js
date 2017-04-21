@@ -314,7 +314,7 @@ function mainController() {
             self.currentlySelectedHabit(null);
             self.userActiveBitBreaks.removeAll();
             self.userEndedBitBreaks.removeAll();
-            
+
             $("#calendar").fullCalendar('destory');
 
             $.ajax({
@@ -345,17 +345,20 @@ function mainController() {
         });
 
         this.get('/habit/:hash', function () {
+            self.userActiveBitBreaks.removeAll();
+            self.userEndedBitBreaks.removeAll();
+
             $.ajax({
                 type: 'GET',
                 url: '/habits/one/' + this.params.hash,
                 success: function (data) {
-                    
+
                     $("#calendar").fullCalendar('destory');
-                    
+
                     if (data.success) {
                         self.currentlySelectedHabit(new BitBreaks(data.bitBreak));
                         var events = [];
-                        var startDate = self.currentlySelectedHabit().startDate;
+                        console.log(self.currentlySelectedHabit());
                         for (var i = 0; i < self.currentlySelectedHabit().dailyStatus.length; i++)
                             events.push(new CalendarDates(self.currentlySelectedHabit().dailyStatus[i], self.currentlySelectedHabit().startDate, i));
                         console.log(events);
@@ -373,28 +376,7 @@ function mainController() {
                                 // If editable, load the modal to add the editable data
                                 console.log(calEvent, jsEvent, view);
                             },
-                            events: [
-                                {
-                                    title: 'This is some text',
-                                    color: 'green',
-                                    start: '2017-04-15',
-                                },
-                                {
-                                    title: 'This is some mote text',
-                                    color: 'green',
-                                    start: '2017-04-16',
-                                },
-                                {
-                                    title: 'This is a text',
-                                    color: 'red',
-                                    start: '2017-04-17',
-                                },
-                                {
-                                    title: 'This is some',
-                                    color: 'green',
-                                    start: '2017-04-18',
-                                }
-                            ]
+                            events: events
                         });
                     }
                     else

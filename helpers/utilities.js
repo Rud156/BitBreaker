@@ -15,8 +15,9 @@
     };
 
     exports.endingDate = function (startDate, noOfDays) {
-        startDate.setDate(startDate.getDate() + noOfDays);
-        return startDate;
+        var endDate = new Date(startDate.getTime());
+        endDate.setDate(startDate.getDate() + noOfDays);
+        return endDate;
     };
 
     exports.daysLeft = function (startDate, totalDays) {
