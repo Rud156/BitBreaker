@@ -64,7 +64,7 @@
     <!-- Start of NavBar -->
     <nav>
         <div class="nav-wrapper blue">
-            <a href="/" class="brand-logo center" style="font-family: 'Oleo Script', cursive">Bit Breaker</a>
+            <a class="brand-logo center" data-bind="attr: {href: currentUser() ? '/#/dashboard' : '/'}" style="font-family: 'Oleo Script', cursive">Bit Breaker</a>
             <a href="#" class="hide-on-med-and-down">
                 <img src="./images/icon.png" alt="Brand Logo" style="padding-left: 14px; height: 95%; padding-top: 3px" />
             </a>
@@ -74,13 +74,13 @@
             <ul class="right hide-on-med-and-down">
                 <li data-bind="ifnot: currentUser"><a href="#registerModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
                 <li data-bind="ifnot: currentUser"><a href="#loginModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
-                <li data-bind="if: currentUser"><a href="/auth/logout" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
+                <li data-bind="if: currentUser"><a onclick="window.location.href='/auth/logout'" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
             </ul>
 
             <ul class="side-nav blue" id="mobile-demo">
                 <li data-bind="ifnot: currentUser"><a href="#registerModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
                 <li data-bind="ifnot: currentUser"><a href="#loginModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
-                <li data-bind="if: currentUser"><a href="/auth/logout" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
+                <li data-bind="if: currentUser"><a onclick="window.location.href='/auth/logout'" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
             </ul>
         </div>
     </nav>
@@ -326,7 +326,8 @@
             <!-- End of Ended or Expired Habit Holder -->
 
             <!-- Start of calendar holder -->
-            <div data-bind="if: currentlySelectedHabit" style="padding-bottom: 30px;">
+            <div data-bind="with: currentlySelectedHabit" style="padding-bottom: 30px;">
+                <h3 data-bind="text: title"></h3>
                 <div id="calendar"></div>
             </div>
             <!-- End of calendar holder -->

@@ -406,20 +406,7 @@ function mainController() {
                 self.userEndedBitBreaks.removeAll();
             }
         });
-
-        this.get('/', function () {
-            if (self.currentUser()) {
-                location.hash = '/dashboard';
-            }
-            else {
-                self.currentlySelectedHabit(null);
-                self.userActiveBitBreaks.removeAll();
-                self.userEndedBitBreaks.removeAll();
-            }
-        });
     }).run();
-
-    location.hash = ''
 }
 
 ko.applyBindings(new mainController());
