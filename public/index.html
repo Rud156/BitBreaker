@@ -74,13 +74,15 @@
             <ul class="right hide-on-med-and-down">
                 <li data-bind="ifnot: currentUser"><a href="#registerModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
                 <li data-bind="ifnot: currentUser"><a href="#loginModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
-                <li data-bind="if: currentUser"><a onclick="window.location.href='/auth/logout'" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
+                <li data-bind="if: currentUser"><a onclick="window.localStorage.removeItem('user'); window.location.href='/auth/logout'" class="waves-effect waves-light"
+                        style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
             </ul>
 
             <ul class="side-nav blue" id="mobile-demo">
                 <li data-bind="ifnot: currentUser"><a href="#registerModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
                 <li data-bind="ifnot: currentUser"><a href="#loginModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
-                <li data-bind="if: currentUser"><a onclick="window.location.href='/auth/logout'" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
+                <li data-bind="if: currentUser"><a onclick="window.localStorage.removeItem('user'); window.location.href='/auth/logout'" class="waves-effect waves-light white-text"
+                        style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
             </ul>
         </div>
     </nav>
@@ -207,7 +209,7 @@
     <!-- Start of HomePage Generic holder DIV -->
     <div data-bind="ifnot: currentUser">
         <!-- Start of About Slider -->
-        <div class="carousel carousel-slider center" data-indicators="true">
+        <div class="carousel carousel-slider center" id="aboutSlider" data-indicators="true">
             <div class="carousel-item green white-text" href="#one!">
                 <h2 style="font-size: 40px;">What This Website is About: </h2>
                 <div class="white-text infoText">
@@ -236,7 +238,7 @@
         <!-- End of About Slider -->
 
         <!-- Start of Quotes Silder -->
-        <div class="carousel carousel-slider center" data-indicators="true">
+        <div class="carousel carousel-slider center" id="quotesSlider" data-indicators="true">
             <div class="carousel-item red white-text" href="#one!">
                 <blockquote class="white-text quoteBody"></blockquote>
                 <div class="container right">
@@ -358,6 +360,15 @@
         $(".button-collapse").sideNav();
         $('.carousel.carousel-slider').carousel({ fullWidth: true });
         $('.tooltipped').tooltip({ delay: 0 });
+    </script>
+    <script>
+        window.setInterval(function () {
+            $("#aboutSlider").carousel('next');
+        }, 7000);
+
+        window.setInterval(function () {
+            $("#quotesSlider").carousel('next');
+        }, 10000)
     </script>
     <script src="./JS/Script.js"></script>
 </body>

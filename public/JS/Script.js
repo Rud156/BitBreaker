@@ -65,7 +65,7 @@ for (var i = 0; i < quoteBodies.length; i++)
     getAndSetQuote(quoteBodies[i], quoteAuthors[i]);
 
 // Helper function to format and store username
-function loggedUser(userObject) {
+function LoggedUser(userObject) {
     this.userName = utilityFunctions.stringToTitleCase(userObject.username);
 }
 // End of helper function to format and store username
@@ -132,7 +132,8 @@ function mainController() {
             data: JSON.stringify({ username: userName, password: password }),
             success: function (data) {
                 if (data.success) {
-                    self.currentUser(new loggedUser(data.user));
+                    self.currentUser(new LoggedUser(data.user));
+                    window.localStorage.setItem('user', self.currentUser().userName);
                     $("#loginModal").modal('close');
                     self.getUserHabits();
                 }
@@ -168,7 +169,8 @@ function mainController() {
             data: JSON.stringify({ username: userName, password: password }),
             success: function (data) {
                 if (data.success) {
-                    self.currentUser(new loggedUser(data.user));
+                    self.currentUser(new LoggedUser(data.user));
+                    window.localStorage.setItem('user', self.currentUser().userName);
                     $("#registerModal").modal('close');
                     self.getUserHabits();
                 }
@@ -180,6 +182,20 @@ function mainController() {
                 messageUtility.handleError(error);
             }
         });
+    };
+
+    self.checkLogin = function () {
+        if (window.localStorage.getItem('user') !== null) {
+            var user = window.localStorage.getItem('user');
+            self.currentUser(new LoggedUser({ username: user }));
+            location.hash = '/dashboard';
+        }
+        else {
+            self.currentlySelectedHabit(null);
+            self.userActiveBitBreaks.removeAll();
+            self.userEndedBitBreaks.removeAll();
+            self.currentUser(null);
+        }
     };
 
     // Get all habits of the user
@@ -397,14 +413,11 @@ function mainController() {
         });
 
         this.get('', function () {
-            if (self.currentUser()) {
-                location.hash = '/dashboard';
-            }
-            else {
-                self.currentlySelectedHabit(null);
-                self.userActiveBitBreaks.removeAll();
-                self.userEndedBitBreaks.removeAll();
-            }
+            self.checkLogin();
+        });
+
+        this.get('/', function () {
+            self.checkLogin();
         });
     }).run();
 }
