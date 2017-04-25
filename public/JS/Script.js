@@ -44,6 +44,7 @@ var messageUtility = new MessagesFunction();
 
 // Start of loading the quotes on the homepage
 function getAndSetQuote(quoteBody, quoteAuthor) {
+    console.log("Function Called");
     $.ajax({
         dataType: 'json',
         url: 'https://apimk.com/motivationalquotes?get_quote=yes',
@@ -197,6 +198,7 @@ function mainController() {
             self.userEndedBitBreaks.removeAll();
             self.currentlySelectedHabit(null);
             self.potentiallyRemovableHabit = null;
+            getAndSetQuote(quoteBody, quoteAuthor);
         }
     };
 
@@ -358,6 +360,7 @@ function mainController() {
                     }
                     else {
                         location.hash = '';
+                        window.localStorage.removeItem('user');
                         messageUtility.showMessages(data.message);
                     }
                 },
