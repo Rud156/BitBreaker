@@ -4,7 +4,7 @@
 /// <reference path="./../../helpers/utilities.js" />
 /// <reference path="./../javascripts/page.js" />
 
-// TODO: Add routing
+// TODO: Fix login loop in case server restarts
 
 // Start of default initializations
 flatpickr('.flatpickr');
@@ -59,10 +59,9 @@ function getAndSetQuote(quoteBody, quoteAuthor) {
 }
 // End of function to load quotes on the homepage
 
-var quoteBodies = document.getElementsByClassName('quoteBody');
-var quoteAuthors = document.getElementsByClassName('quoteAuthor');
-for (var i = 0; i < quoteBodies.length; i++)
-    getAndSetQuote(quoteBodies[i], quoteAuthors[i]);
+var quoteBody = document.getElementById('quoteBody');
+var quoteAuthor = document.getElementById('quoteAuthor');
+getAndSetQuote(quoteBody, quoteAuthor);
 
 // Helper function to format and store username
 function LoggedUser(userObject) {
@@ -99,6 +98,8 @@ function CalendarDates(dailyData, startDate, index) {
     this.start = new Date(startDate.getTime());
     this.start.setDate(startDate.getDate() + index);
     this.start = this.start.toISOString();
+
+    this.allDay = true;
 }
 // End of function to create dats specific to fullCalendar.io
 
@@ -191,10 +192,11 @@ function mainController() {
             location.hash = '/dashboard';
         }
         else {
-            self.currentlySelectedHabit(null);
+            self.currentUser(null);
             self.userActiveBitBreaks.removeAll();
             self.userEndedBitBreaks.removeAll();
-            self.currentUser(null);
+            self.currentlySelectedHabit(null);
+            self.potentiallyRemovableHabit = null;
         }
     };
 
@@ -220,6 +222,7 @@ function mainController() {
             messageUtility.showMessages('Please enter a title to continue...');
             return;
         }
+        // Encode the data to prevent transformation when strigifying it
         description = encodeURI(description);
 
         var startDate = new Date();
@@ -328,16 +331,17 @@ function mainController() {
 
     Sammy(function () {
         this.get('/dashboard', function () {
-
             $("#calendar").fullCalendar('destory');
 
             $.ajax({
                 url: '/habits/all',
                 type: 'GET',
                 success: function (data) {
+                    // RESET the values to default state
                     self.currentlySelectedHabit(null);
                     self.userActiveBitBreaks.removeAll();
                     self.userEndedBitBreaks.removeAll();
+                    self.potentiallyRemovableHabit = null;
 
                     if (data.success) {
                         var activeBitBreaks = [];
@@ -364,12 +368,12 @@ function mainController() {
         });
 
         this.get('/habit/:hash', function () {
-
             $.ajax({
                 type: 'GET',
                 url: '/habits/one/' + this.params.hash,
                 success: function (data) {
-
+                    //RESET values to default state
+                    self.potentiallyRemovableHabit = null;
                     self.userActiveBitBreaks.removeAll();
                     self.userEndedBitBreaks.removeAll();
 
@@ -394,6 +398,8 @@ function mainController() {
                                 // If editable, load the modal to add the editable data
                                 console.log(calEvent, jsEvent, view);
                             },
+                            // Try adding dynamic event. Make a function to reuse the calender
+                            // instead of destroying and creating it again and again.
                             events: events
                         });
                     }
@@ -408,7 +414,6 @@ function mainController() {
                 }
             });
 
-            // $("#calendar").fullCalendar('destory');
             // TODO: Give the ability to add a daily status
         });
 

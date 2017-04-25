@@ -111,7 +111,7 @@
         <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
             <h5>Login Here...</h5>
         </div>
-        <div class="modal-content purple">
+        <div class="modal-content light-blue darken-4">
             <div class="row white-text">
                 <div class="input-field col s12">
                     <input id="loginUsername" type="text" class="validate">
@@ -125,8 +125,8 @@
                 </div>
             </div>
         </div>
-        <div class="modal-footer purple">
-            <button class="waves-effect waves-light btn red right z-depth-5" style="margin-right: 14px" data-bind="click: loginUser">
+        <div class="modal-footer light-blue darken-4">
+            <button class="waves-effect waves-light btn right z-depth-2" style="margin-right: 14px; background: #e54d03" data-bind="click: loginUser">
                 Login !!!
             </button>
         </div>
@@ -138,7 +138,7 @@
         <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
             <h5>Register Here...</h5>
         </div>
-        <div class="modal-content purple">
+        <div class="modal-content light-blue darken-4">
             <div class="row white-text">
                 <div class="input-field col s12">
                     <input id="registerUsername" type="text" class="validate">
@@ -158,8 +158,8 @@
                 </div>
             </div>
         </div>
-        <div class="modal-footer purple">
-            <button class="waves-effect waves-light btn red right z-depth-5" style="margin-right: 14px" data-bind="click: registerUser">
+        <div class="modal-footer light-blue darken-4">
+            <button class="waves-effect waves-light btn red right z-depth-2" style="margin-right: 14px; background: #e54d03" data-bind="click: registerUser">
                 Register !!!
             </button>
         </div>
@@ -171,7 +171,7 @@
         <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
             <h5>New Habit</h5>
         </div>
-        <div class="modal-content purple" style="font-family: 'Lobster', cursive">
+        <div class="modal-content purple lighten-1" style="font-family: 'Lobster', cursive">
             <div class="row white-text">
                 <div class="input-field col s12">
                     <input id="bitTitle" type="text" class="validate">
@@ -199,7 +199,7 @@
             </div>
         </div>
         <div class="modal-footer purple">
-            <button class="waves-effect waves-light btn red right z-depth-5" style="margin-right: 14px" data-bind="click: saveNewHabit">
+            <button class="waves-effect waves-light btn red right z-depth-2" style="margin-right: 14px" data-bind="click: saveNewHabit">
                 Save Habit
             </button>
         </div>
@@ -208,9 +208,21 @@
 
     <!-- Start of HomePage Generic holder DIV -->
     <div data-bind="ifnot: currentUser">
+        <!-- TODO: Fix issue regarding the constant quote -->
+        <!-- Start of Quotes Holder -->
+        <div class="center">
+            <div class="grey darken-3 white-text" style="padding-top: 30px; padding-bottom: 30px">
+                <blockquote class="white-text" id="quoteBody" style="margin: 0"></blockquote>
+                <div class="container" style="text-align: right">
+                    <h4 id="quoteAuthor" style="margin: 0"></h4>
+                </div>
+            </div>
+        </div>
+        <!-- End of Quotes Holder -->
+
         <!-- Start of About Slider -->
         <div class="carousel carousel-slider center" id="aboutSlider" data-indicators="true">
-            <div class="carousel-item green white-text" href="#one!">
+            <div class="carousel-item green darken-3 white-text" href="#one!">
                 <h2 style="font-size: 40px;">What This Website is About: </h2>
                 <div class="white-text infoText">
                     <div class="container">
@@ -218,7 +230,7 @@
                     </div>
                 </div>
             </div>
-            <div class="carousel-item light-blue white-text" href="#two!">
+            <div class="carousel-item purple darken-4 white-text" href="#two!">
                 <h2 style="font-size: 40px;">How to get started: </h2>
                 <div class="white-text infoText">
                     <div class="container">
@@ -226,7 +238,7 @@
                     </div>
                 </div>
             </div>
-            <div class="carousel-item orange white-text" href="#three!">
+            <div class="carousel-item orange darken-2 white-text" href="#three!">
                 <h2 style="font-size: 40px;">Anything Else: </h2>
                 <div class="white-text infoText">
                     <div class="container">
@@ -236,35 +248,6 @@
             </div>
         </div>
         <!-- End of About Slider -->
-
-        <!-- Start of Quotes Silder -->
-        <div class="carousel carousel-slider center" id="quotesSlider" data-indicators="true">
-            <div class="carousel-item red white-text" href="#one!">
-                <blockquote class="white-text quoteBody"></blockquote>
-                <div class="container right">
-                    <h2 class="quoteAuthor"></h2>
-                </div>
-            </div>
-            <div class="carousel-item amber white-text" href="#two!">
-                <blockquote class="white-text quoteBody"></blockquote>
-                <div class="container right">
-                    <h2 class="quoteAuthor"></h2>
-                </div>
-            </div>
-            <div class="carousel-item green white-text" href="#three!">
-                <blockquote class="white-text quoteBody"></blockquote>
-                <div class="container right">
-                    <h2 class="quoteAuthor"></h2>
-                </div>
-            </div>
-            <div class="carousel-item purple white-text" href="#four!">
-                <blockquote class="white-text quoteBody"></blockquote>
-                <div class="container right">
-                    <h2 class="quoteAuthor"></h2>
-                </div>
-            </div>
-        </div>
-        <!-- End of Quotes Silder -->
     </div>
     <!-- End of Homepage Generic Holder DIV -->
 
@@ -365,10 +348,6 @@
         window.setInterval(function () {
             $("#aboutSlider").carousel('next');
         }, 7000);
-
-        window.setInterval(function () {
-            $("#quotesSlider").carousel('next');
-        }, 10000)
     </script>
     <script src="./JS/Script.js"></script>
 </body>
