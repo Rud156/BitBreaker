@@ -211,10 +211,10 @@
         <!-- TODO: Fix issue regarding the constant quote -->
         <!-- Start of Quotes Holder -->
         <div class="center">
-            <div class="grey darken-3 white-text" style="padding-top: 30px; padding-bottom: 30px">
-                <blockquote class="white-text" id="quoteBody" style="margin: 0"></blockquote>
+            <div class="grey darken-3 white-text" style="padding-top: 30px; padding-bottom: 30px" data-bind="with: currentQuote">
+                <blockquote class="white-text" style="margin: 0" data-bind="text: quote"></blockquote>
                 <div class="container" style="text-align: right">
-                    <h4 id="quoteAuthor" style="margin: 0"></h4>
+                    <h4 style="margin: 0" data-bind="text: '---  ' + author"></h4>
                 </div>
             </div>
         </div>

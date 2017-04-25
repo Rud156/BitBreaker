@@ -4,7 +4,7 @@
 /// <reference path="./../../helpers/utilities.js" />
 /// <reference path="./../javascripts/page.js" />
 
-// TODO: Fix login loop in case server restarts
+// TODO: Fix quote getter for faulty login
 
 // Start of default initializations
 flatpickr('.flatpickr');
@@ -41,28 +41,6 @@ function MessagesFunction() {
 var messageUtility = new MessagesFunction();
 // End of utility functions
 
-
-// Start of loading the quotes on the homepage
-function getAndSetQuote(quoteBody, quoteAuthor) {
-    console.log("Function Called");
-    $.ajax({
-        dataType: 'json',
-        url: 'https://apimk.com/motivationalquotes?get_quote=yes',
-        success: function (data) {
-            data = data[0];
-            quoteBody.innerText = data.quote;
-            quoteAuthor.innerText = '--- ' + data.author_name;
-        },
-        error: function (error) {
-            messageUtility.handleError(error);
-        }
-    });
-}
-// End of function to load quotes on the homepage
-
-var quoteBody = document.getElementById('quoteBody');
-var quoteAuthor = document.getElementById('quoteAuthor');
-getAndSetQuote(quoteBody, quoteAuthor);
 
 // Helper function to format and store username
 function LoggedUser(userObject) {
@@ -109,6 +87,8 @@ function CalendarDates(dailyData, startDate, index) {
 function mainController() {
     var self = this;
 
+    self.currentQuote = ko.observable();
+
     self.currentUser = ko.observable();
 
     self.userActiveBitBreaks = ko.observableArray();
@@ -117,6 +97,22 @@ function mainController() {
     self.currentlySelectedHabit = ko.observable();
 
     self.potentiallyRemovableHabit = null;
+
+    // Start of function to load quote into the homepage
+    self.getQuote = function () {
+        $.ajax({
+            dataType: 'json',
+            url: 'https://apimk.com/motivationalquotes?get_quote=yes',
+            success: function (data) {
+                data = data[0];
+                self.currentQuote({ quote: data.quote, author: data.author_name });
+            },
+            error: function (error) {
+                messageUtility.handleError(error);
+            }
+        });
+    };
+    // End of function to load quote
 
     // Login user function
     self.loginUser = function () {
@@ -198,7 +194,7 @@ function mainController() {
             self.userEndedBitBreaks.removeAll();
             self.currentlySelectedHabit(null);
             self.potentiallyRemovableHabit = null;
-            getAndSetQuote(quoteBody, quoteAuthor);
+            self.getQuote();
         }
     };
 
