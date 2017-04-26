@@ -1,8 +1,8 @@
-/// <reference path="./../javascripts/jquery.d.ts" />
-/// <reference path="./../javascripts/knockoutJS.d.ts" />
-/// <reference path="./../javascripts/SammyJS.d.ts" />
-/// <reference path="./../../helpers/utilities.js" />
-/// <reference path="./../javascripts/page.js" />
+/// <reference path='./../javascripts/jquery.d.ts' />
+/// <reference path='./../javascripts/knockoutJS.d.ts' />
+/// <reference path='./../javascripts/SammyJS.d.ts' />
+/// <reference path='./../../helpers/utilities.js' />
+/// <reference path='./../javascripts/page.js' />
 
 // TODO: Fix quote getter for faulty login
 
@@ -11,7 +11,7 @@ flatpickr('.flatpickr');
 
 var iFrame = null;
 tinymce.init({
-    selector: "#bitDescription",
+    selector: '#bitDescription',
     theme: 'modern',
     plugins: ['image textcolor spellchecker insertdatetime table searchreplace link emoticons colorpicker textcolor autoresize imagetools paste'],
     toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | link image | bullist numlist outdent indent | emoticons forecolor`',
@@ -21,7 +21,7 @@ tinymce.init({
             iFrame = iFrame.contentWindow || iFrame.contentDocument;
         });
     },
-    default_link_target: "_blank"
+    default_link_target: '_blank'
 });
 // End of default initializations
 
@@ -29,12 +29,12 @@ tinymce.init({
 function MessagesFunction() {
     this.handleError = function (error) {
         console.log(error);
-        $("#alertModal").modal('open');
-        document.getElementById('alertModalContent').innerText = "Error Occurred.";
+        $('#alertModal').modal('open');
+        document.getElementById('alertModalContent').innerText = 'Error Occurred.';
     };
 
     this.showMessages = function (message) {
-        $("#alertModal").modal('open');
+        $('#alertModal').modal('open');
         document.getElementById('alertModalContent').innerText = message;
     };
 }
@@ -119,7 +119,7 @@ function mainController() {
         var userName = document.getElementById('loginUsername').value.trim();
         var password = document.getElementById('loginPassword').value.trim();
         if (userName === '' || password === '') {
-            messageUtility.showMessages("Fields cannot be blank!!!");
+            messageUtility.showMessages('Fields cannot be blank!!!');
             return;
         }
 
@@ -132,7 +132,7 @@ function mainController() {
                 if (data.success) {
                     self.currentUser(new LoggedUser(data.user));
                     window.localStorage.setItem('user', self.currentUser().userName);
-                    $("#loginModal").modal('close');
+                    $('#loginModal').modal('close');
                     self.getUserHabits();
                 }
                 else {
@@ -167,10 +167,8 @@ function mainController() {
             data: JSON.stringify({ username: userName, password: password }),
             success: function (data) {
                 if (data.success) {
-                    self.currentUser(new LoggedUser(data.user));
-                    window.localStorage.setItem('user', self.currentUser().userName);
-                    $("#registerModal").modal('close');
-                    self.getUserHabits();
+                    $('#registerModal').modal('close');
+                    messageUtility.showMessages('Registeration successful. Please login to continue...');
                 }
                 else {
                     messageUtility.showMessages(data.message);
@@ -247,7 +245,7 @@ function mainController() {
             url: '/habits/save',
             success: function (data) {
                 if (data.success) {
-                    $("#editorModal").modal('close');
+                    $('#editorModal').modal('close');
                     self.userActiveBitBreaks.push(new BitBreaks(data.bitBreak));
                 }
                 else
@@ -262,14 +260,14 @@ function mainController() {
     // Function to accept prompt from user to remove a habit
     self.removeHabit = function (habitObject) {
         self.potentiallyRemovableHabit = habitObject;
-        $("#promptModal").modal('open');
+        $('#promptModal').modal('open');
     };
 
     // Confirm deletion of habit
     self.deleteHabit = function () {
-        $("#promptModal").modal('close');
+        $('#promptModal').modal('close');
         if (self.potentiallyRemovableHabit === null) {
-            messageUtility.showMessages("No habit marked for deletion!!! You're not playing fair!!!");
+            messageUtility.showMessages('No habit marked for deletion!!! You\'re not playing fair!!!');
             return;
         }
         var hash = self.potentiallyRemovableHabit.hash;
@@ -295,7 +293,7 @@ function mainController() {
 
     // Function to cancel deletion of the habit
     self.cancelDeletion = function () {
-        $("#promptModal").modal('close');
+        $('#promptModal').modal('close');
         self.potentiallyRemovableHabit = null;
     };
 
@@ -329,7 +327,7 @@ function mainController() {
 
     Sammy(function () {
         this.get('/dashboard', function () {
-            $("#calendar").fullCalendar('destory');
+            $('#calendar').fullCalendar('destory');
 
             $.ajax({
                 url: '/habits/all',
@@ -376,7 +374,7 @@ function mainController() {
                     self.userActiveBitBreaks.removeAll();
                     self.userEndedBitBreaks.removeAll();
 
-                    $("#calendar").fullCalendar('destory');
+                    $('#calendar').fullCalendar('destory');
 
                     if (data.success) {
                         self.currentlySelectedHabit(new BitBreaks(data.bitBreak));
@@ -384,7 +382,7 @@ function mainController() {
                         for (var i = 0; i < self.currentlySelectedHabit().dailyStatus.length; i++)
                             events.push(new CalendarDates(self.currentlySelectedHabit().dailyStatus[i], self.currentlySelectedHabit().startDate, i));
 
-                        $("#calendar").fullCalendar({
+                        $('#calendar').fullCalendar({
                             header: {
                                 left: 'prevYear,nextYear',
                                 center: 'title',

@@ -50,7 +50,7 @@
                     if (!dailyStatus[i]) {
                         dailyStatus[i] = {};
                         dailyStatus[i].success = false;
-                        dailyStatus[i].quote = "Nothing Here";
+                        dailyStatus[i].quote = 'Nothing Here';
                     }
                     i++;
                 }
@@ -60,7 +60,7 @@
                     if (!dailyStatus[i]) {
                         dailyStatus[i] = {};
                         dailyStatus[i].success = false;
-                        dailyStatus[i].quote = "Nothing Here";
+                        dailyStatus[i].quote = 'Nothing Here';
                     }
                 }
             }
@@ -85,7 +85,7 @@
                 if (!dailyStatus[i]) {
                     dailyStatus[i] = {};
                     dailyStatus[i].success = false;
-                    dailyStatus[i].quote = "Nothing Here";
+                    dailyStatus[i].quote = 'Nothing Here';
                 }
                 i++;
             }
@@ -95,7 +95,7 @@
                 if (!dailyStatus[i]) {
                     dailyStatus[i] = {};
                     dailyStatus[i].success = false;
-                    dailyStatus[i].quote = "Nothing Here";
+                    dailyStatus[i].quote = 'Nothing Here';
                 }
             }
         }

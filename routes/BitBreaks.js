@@ -57,7 +57,7 @@ router.patch('/one/:hash', utilities.checkAuthentication, function (req, res, ne
             else if (dateDiff < -3)
                 return res.json({ success: false, message: 'You cannot edit more than 3 days in the past' });
             else if (typeof (dateDiff) !== 'number')
-                return res.json({ success: false, message: "Invalid date diffrence structure" });
+                return res.json({ success: false, message: 'Invalid date diffrence structure' });
 
             var today = new Date();
             today.setUTCHours(0, 0, 0, 0);
