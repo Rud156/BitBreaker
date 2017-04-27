@@ -32,6 +32,23 @@
         return totalDays;
     };
 
+    exports.calculateStreak = function (userHabit) {
+        var dailyStatus = userHabit.dailyStatus;
+        var currentStreak = 0;
+        var maxStreak = 0;
+        for (var i = 0; i < dailyStatus.length; i++) {
+            if (dailyStatus[i].success) {
+                currentStreak++;
+            }
+            else{
+                if(currentStreak > maxStreak)
+                    maxStreak = currentStreak;
+                currentStreak = 0;
+            }
+        }
+        return maxStreak;
+    };
+
     exports.setHabitDates = function (userHabits) {
         var today = new Date();
         today.setUTCHours(0, 0, 0, 0);

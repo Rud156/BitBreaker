@@ -311,8 +311,10 @@
             <!-- End of Ended or Expired Habit Holder -->
 
             <!-- Start of calendar holder -->
-            <div data-bind="with: currentlySelectedHabit" style="padding-bottom: 30px;">
+            <div data-bind="with: currentlySelectedHabit" style="padding-bottom: 30px; font-family: 'Lobster', cursive;">
                 <h3 data-bind="text: title"></h3>
+                <div data-bind="html: description"></div>
+                <div data-bind="text: 'Max Streak: ' + maxStreak"></div>
                 <div id="calendar"></div>
             </div>
             <!-- End of calendar holder -->
@@ -349,6 +351,7 @@
             $("#aboutSlider").carousel('next');
         }, 7000);
     </script>
+    <script src="./JS/Models.js"></script>
     <script src="./JS/Script.js"></script>
 </body>
 

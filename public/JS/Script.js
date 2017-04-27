@@ -3,85 +3,11 @@
 /// <reference path='./../javascripts/SammyJS.d.ts' />
 /// <reference path='./../../helpers/utilities.js' />
 /// <reference path='./../javascripts/page.js' />
+/// <reference path="./Models.js" />
 
-// TODO: Fix quote getter for faulty login
+var messageUtility = new MessageUtilities();
 
-// Start of default initializations
-flatpickr('.flatpickr');
-
-var iFrame = null;
-tinymce.init({
-    selector: '#bitDescription',
-    theme: 'modern',
-    plugins: ['image textcolor spellchecker insertdatetime table searchreplace link emoticons colorpicker textcolor autoresize imagetools paste'],
-    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | link image | bullist numlist outdent indent | emoticons forecolor`',
-    setup: function (editor) {
-        editor.on('init', function (e) {
-            iFrame = document.getElementById('bitDescription_ifr');
-            iFrame = iFrame.contentWindow || iFrame.contentDocument;
-        });
-    },
-    default_link_target: '_blank'
-});
-// End of default initializations
-
-// Start of utility functions
-function MessagesFunction() {
-    this.handleError = function (error) {
-        console.log(error);
-        $('#alertModal').modal('open');
-        document.getElementById('alertModalContent').innerText = 'Error Occurred.';
-    };
-
-    this.showMessages = function (message) {
-        $('#alertModal').modal('open');
-        document.getElementById('alertModalContent').innerText = message;
-    };
-}
-var messageUtility = new MessagesFunction();
-// End of utility functions
-
-
-// Helper function to format and store username
-function LoggedUser(userObject) {
-    this.userName = utilityFunctions.stringToTitleCase(userObject.username);
-}
-// End of helper function to format and store username
-
-// Helper function to hold the habits in a standard format
-function BitBreaks(habitObject) {
-    this.hash = habitObject.hash;
-    this.title = utilityFunctions.stringToTitleCase(habitObject.title);
-    this.description = decodeURI(habitObject.description);
-    this.startDate = new Date(habitObject.startDate);
-    this.totalDays = habitObject.totalDays;
-
-    this.foreverHabit = habitObject.foreverHabit;
-
-    // This will be of type array. Each day will be stored as an index of the array
-    this.dailyStatus = habitObject.dailyStatus;
-    this.ended = habitObject.ended;
-
-    // These will give incorrect values if forever habit is checked. Basically -ve values...
-    this.daysLeft = utilityFunctions.daysLeft(this.startDate, habitObject.totalDays);
-    this.endDate = utilityFunctions.endingDate(this.startDate, habitObject.totalDays);
-}
-// End of habit helper function
-
-// Function to create dates specific to fullCalendar.io
-function CalendarDates(dailyData, startDate, index) {
-    this.title = dailyData.quote;
-    this.color = dailyData.success === false ? 'red' : 'green';
-    this.success = dailyData.success;
-
-    this.start = new Date(startDate.getTime());
-    this.start.setDate(startDate.getDate() + index);
-    this.start = this.start.toISOString();
-
-    this.allDay = true;
-}
-// End of function to create dats specific to fullCalendar.io
-
+// TODO: Add UI for single habit view
 
 // Start of main controller
 function mainController() {
@@ -377,7 +303,7 @@ function mainController() {
                     $('#calendar').fullCalendar('destory');
 
                     if (data.success) {
-                        self.currentlySelectedHabit(new BitBreaks(data.bitBreak));
+                        self.currentlySelectedHabit(new BitBreaks(data.bitBreak, data.maxStreak));
                         var events = [];
                         for (var i = 0; i < self.currentlySelectedHabit().dailyStatus.length; i++)
                             events.push(new CalendarDates(self.currentlySelectedHabit().dailyStatus[i], self.currentlySelectedHabit().startDate, i));

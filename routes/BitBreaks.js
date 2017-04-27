@@ -25,7 +25,8 @@ router.get('/one/:hash', utilities.checkAuthentication, function (req, res, next
             return res.json({ success: false, message: 'Invalid habit requested' });
         else {
             bitBreakObject = utilities.setHabitDate(bitBreakObject);
-            return res.json({ success: true, message: 'Habit successfully found', bitBreak: bitBreakObject });
+            var maxStreak = utilities.calculateStreak(bitBreakObject);
+            return res.json({ success: true, message: 'Habit successfully found', bitBreak: bitBreakObject, maxStreak: maxStreak });
         }
     });
 });
@@ -50,7 +51,7 @@ router.patch('/one/:hash', utilities.checkAuthentication, function (req, res, ne
             if (bitBreakObject.ended)
                 return res.json({ success: false, message: 'You cannot update an ended habit' });
 
-            
+
             var dateDiff = setDate;
             if (dateDiff > 0)
                 return res.json({ success: false, message: 'You cannot edit a date in the future' });
