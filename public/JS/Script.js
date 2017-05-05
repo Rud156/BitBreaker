@@ -2,12 +2,12 @@
 /// <reference path='./../javascripts/knockoutJS.d.ts' />
 /// <reference path='./../javascripts/SammyJS.d.ts' />
 /// <reference path='./../../helpers/utilities.js' />
-/// <reference path='./../javascripts/page.js' />
 /// <reference path="./Models.js" />
 
 var messageUtility = new MessageUtilities();
 
 // TODO: Add UI for single habit view
+// TODO: Add Ability to edit and update habit
 
 // Start of main controller
 function mainController() {
@@ -127,6 +127,42 @@ function mainController() {
         location.hash = '/dashboard';
     };
 
+    self.saveDailyData = function () {
+        var success = document.getElementById('successCheck').checked;
+        var quote = document.getElementById('dailyData').value.trim();
+        // TODO: Set setDate value
+        var setDate = null;
+        var hash = self.currentlySelectedHabit().hash;
+
+        if (hash === null || hash === undefined) {
+            messageUtility.showMessages('You\'re not playing fair!!!');
+            return;
+        }
+        if (setDate === null || setDate === undefined || success === null || success === undefined ||
+            quote === null || quote === undefined) {
+            messageUtility.showMessages('All fields are required. Please fill all of them');
+            return;
+        }
+
+        $.ajax({
+            type: 'PATCH',
+            contentType: 'application/json',
+            url: '/one/' + hash,
+            data: JSON.stringify({ success: success, dayQuote: quote, setDate: setDate }),
+            success: function (data) {
+                if (data.success) {
+                    // TODO: Dynamically update the calendar
+                }
+                else {
+                    messageUtility.showMessages(data.message);
+                }
+            },
+            error: function (error) {
+                messageUtility.handleError(error);
+            }
+        });
+    };
+
     // Function to save the entered user habit
     // URI encode the description before sending it to prevent garbled form
     // Basic conditional checks
@@ -152,7 +188,7 @@ function mainController() {
         endDate = new Date(endDate);
 
         var totalDays = -1;
-        // If the forever button is not checked calculate the total days left til ending
+        // If the forever button is not checked calculate the total days left till ending
         if (!foreverCheck)
             totalDays = utilityFunctions.dateDiff(startDate, endDate);
 
@@ -316,11 +352,12 @@ function mainController() {
                             },
                             eventStartEditable: false,
                             eventDurationEditable: false,
-                            eventClick: function (calEvent, jsEvent, view) {
-                                // Load a custom modal to display details
-                                // If editable, load the modal to add the editable data
-                                console.log(calEvent, jsEvent, view);
-                            },
+                            // eventClick: function (calEvent, jsEvent, view) {
+                            //     // Load a custom modal to display details
+                            //     // If editable, load the modal to add the editable data
+                            //     console.log(calEvent, jsEvent, view);
+                            //     // $('#calendarModal').modal('open');
+                            // },
                             // Try adding dynamic event. Make a function to reuse the calender
                             // instead of destroying and creating it again and again.
                             events: events
@@ -336,8 +373,6 @@ function mainController() {
                     messageUtility.handleError(error);
                 }
             });
-
-            // TODO: Give the ability to add a daily status
         });
 
         this.get('', function () {

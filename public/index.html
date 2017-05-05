@@ -31,29 +31,29 @@
             padding: 0;
             overflow: auto;
         }
-        
+
         blockquote {
             padding-top: 30px;
             font-size: 40px;
             font-family: 'Great Vibes', cursive;
         }
-        
+
         label {
             color: white !important;
         }
-        
+
         .carousel-item h2 {
             font-size: 35px;
             font-family: 'Lobster', cursive;
             padding-top: 10px;
         }
-        
+
         .infoText {
             font-size: 35px;
             padding-top: 20px;
             font-family: 'Amaranth', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         #displayContainer {
             font-family: 'Oleo Script', cursive;
         }
@@ -206,6 +206,31 @@
     </div>
     <!-- End of Editor Modal -->
 
+    <!-- Start of Calendar Modal -->
+    <div id="calendarModal" class="modal">
+        <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
+            <h5>Edit Day Details</h5>
+        </div>
+        <div class="modal-content purple lighten-1" style="font-family: 'Lobster', cursive">
+            <div class="row">
+                <div class="input-field col s12 center">
+                    <input type="checkbox" id="successCheck" class="filled-in" />
+                    <label for="successCheck" style="font-size: 20px">Succeeded</label>
+                </div>
+                <div class="input-field col s12">
+                    <textarea id="dailyData" class="materialize-textarea" data-length="120"></textarea>
+                    <label for="dailyData">Enter Daily Progress Here...</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer purple">
+            <button class="waves-effect waves-light btn red right z-depth-2" style="margin-right: 14px" data-bind="click: saveDailyData">
+                Save
+            </button>
+        </div>
+    </div>
+    <!-- End of Calendar Modal -->
+
     <!-- Start of HomePage Generic holder DIV -->
     <div data-bind="ifnot: currentUser">
         <!-- TODO: Fix issue regarding the constant quote -->
@@ -345,12 +370,14 @@
         $(".button-collapse").sideNav();
         $('.carousel.carousel-slider').carousel({ fullWidth: true });
         $('.tooltipped').tooltip({ delay: 0 });
+        $('textarea#dailyData').characterCounter();
     </script>
     <script>
         window.setInterval(function () {
             $("#aboutSlider").carousel('next');
         }, 7000);
     </script>
+    <script src="./JS/ScriptInitiators.js"></script>
     <script src="./JS/Models.js"></script>
     <script src="./JS/Script.js"></script>
 </body>
