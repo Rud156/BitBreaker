@@ -16,7 +16,11 @@
 
     exports.dateDiffAbsolute = function (startDate, endDate) {
         var oneDay = 24 * 60 * 60 * 1000;
-        var dateDiff = Math.round((endDate.getTime() - startDate.getTime()) / oneDay);
+        var dateDiff = (endDate.getTime() - startDate.getTime()) / oneDay;
+        if (dateDiff < 0)
+            dateDiff = Math.ceil(dateDiff);
+        else
+            dateDiff = Math.floor(dateDiff);
         return dateDiff;
     };
 

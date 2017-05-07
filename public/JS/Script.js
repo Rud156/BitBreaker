@@ -1,6 +1,5 @@
 /// <reference path='./../javascripts/jquery.d.ts' />
 /// <reference path='./../javascripts/knockoutJS.d.ts' />
-/// <reference path='./../javascripts/SammyJS.d.ts' />
 /// <reference path='./../../helpers/utilities.js' />
 /// <reference path="./Models.js" />
 
@@ -8,9 +7,10 @@ var messageUtility = new MessageUtilities();
 
 // TODO: Add UI for single habit view
 // TODO: Add Ability to edit and update habit
+// TODO: Remove Sammy.JS
 
 // Start of main controller
-function mainController() {
+function MainController() {
     var self = this;
 
     self.currentQuote = ko.observable();
@@ -21,6 +21,7 @@ function mainController() {
     self.userEndedBitBreaks = ko.observableArray();
 
     self.currentlySelectedHabit = ko.observable();
+    self.currentEvent = null;
 
     self.potentiallyRemovableHabit = null;
 
@@ -130,8 +131,7 @@ function mainController() {
     self.saveDailyData = function () {
         var success = document.getElementById('successCheck').checked;
         var quote = document.getElementById('dailyData').value.trim();
-        // TODO: Set setDate value
-        var setDate = null;
+        var setDate = utilityFunctions.dateDiffAbsolute(new Date(), self.currentEvent.start._d);
         var hash = self.currentlySelectedHabit().hash;
 
         if (hash === null || hash === undefined) {
@@ -144,14 +144,30 @@ function mainController() {
             return;
         }
 
+        if (quote.length > 120) {
+            messageUtility.showMessages('Message length too long. Please reduce the size...');
+            return;
+        }
+
         $.ajax({
             type: 'PATCH',
             contentType: 'application/json',
-            url: '/one/' + hash,
+            url: '/habits/one/' + hash,
             data: JSON.stringify({ success: success, dayQuote: quote, setDate: setDate }),
             success: function (data) {
                 if (data.success) {
                     // TODO: Dynamically update the calendar
+                    self.currentEvent.success = data.updatedStatus.success;
+                    self.currentEvent.title = data.updatedStatus.quote;
+
+                    if (data.updatedStatus.success === true)
+                        self.currentEvent.color = 'green';
+                    else
+                        self.currentEvent.color = 'red';
+
+                    $('#calendar').fullCalendar('updateEvent', self.currentEvent);
+                    self.currentEvent = null;
+                    $('#calendarModal').modal('close');
                 }
                 else {
                     messageUtility.showMessages(data.message);
@@ -286,103 +302,110 @@ function mainController() {
     self.showHabitDetails = function (habitObject) {
         location.hash = '/habit/' + habitObject.hash;
     };
-
-    Sammy(function () {
-        this.get('/dashboard', function () {
-            $('#calendar').fullCalendar('destory');
-
-            $.ajax({
-                url: '/habits/all',
-                type: 'GET',
-                success: function (data) {
-                    // RESET the values to default state
-                    self.currentlySelectedHabit(null);
-                    self.userActiveBitBreaks.removeAll();
-                    self.userEndedBitBreaks.removeAll();
-                    self.potentiallyRemovableHabit = null;
-
-                    if (data.success) {
-                        var activeBitBreaks = [];
-                        var endedBitBreaks = [];
-                        data.bitBreaks.forEach(function (value) {
-                            // Condition to check if the habit has ended of not
-                            if (value.ended)
-                                endedBitBreaks.push(new BitBreaks(value));
-                            else
-                                activeBitBreaks.push(new BitBreaks(value));
-                        });
-                        self.userActiveBitBreaks(activeBitBreaks);
-                        self.userEndedBitBreaks(endedBitBreaks);
-                    }
-                    else {
-                        location.hash = '';
-                        window.localStorage.removeItem('user');
-                        messageUtility.showMessages(data.message);
-                    }
-                },
-                error: function () {
-                    messageUtility.handleError(error);
-                }
-            });
-        });
-
-        this.get('/habit/:hash', function () {
-            $.ajax({
-                type: 'GET',
-                url: '/habits/one/' + this.params.hash,
-                success: function (data) {
-                    //RESET values to default state
-                    self.potentiallyRemovableHabit = null;
-                    self.userActiveBitBreaks.removeAll();
-                    self.userEndedBitBreaks.removeAll();
-
-                    $('#calendar').fullCalendar('destory');
-
-                    if (data.success) {
-                        self.currentlySelectedHabit(new BitBreaks(data.bitBreak, data.maxStreak));
-                        var events = [];
-                        for (var i = 0; i < self.currentlySelectedHabit().dailyStatus.length; i++)
-                            events.push(new CalendarDates(self.currentlySelectedHabit().dailyStatus[i], self.currentlySelectedHabit().startDate, i));
-
-                        $('#calendar').fullCalendar({
-                            header: {
-                                left: 'prevYear,nextYear',
-                                center: 'title',
-                                right: 'today prev,next'
-                            },
-                            eventStartEditable: false,
-                            eventDurationEditable: false,
-                            // eventClick: function (calEvent, jsEvent, view) {
-                            //     // Load a custom modal to display details
-                            //     // If editable, load the modal to add the editable data
-                            //     console.log(calEvent, jsEvent, view);
-                            //     // $('#calendarModal').modal('open');
-                            // },
-                            // Try adding dynamic event. Make a function to reuse the calender
-                            // instead of destroying and creating it again and again.
-                            events: events
-                        });
-                    }
-                    else {
-                        location.hash = '/dashboard';
-                        messageUtility.showMessages(data.message);
-                    }
-                },
-                error: function (error) {
-                    location.hash = '/dashboard';
-                    messageUtility.handleError(error);
-                }
-            });
-        });
-
-        this.get('', function () {
-            self.checkLogin();
-        });
-
-        this.get('/', function () {
-            self.checkLogin();
-        });
-    }).run();
 }
 
-ko.applyBindings(new mainController());
+var mainController = new MainController();
+ko.applyBindings(mainController);
+
+var routes = {
+    '/dashboard': function () {
+        $('#calendar').fullCalendar('destory');
+
+        $.ajax({
+            url: '/habits/all',
+            type: 'GET',
+            success: function (data) {
+                // RESET the values to default state
+                mainController.currentlySelectedHabit(null);
+                mainController.userActiveBitBreaks.removeAll();
+                mainController.userEndedBitBreaks.removeAll();
+                mainController.potentiallyRemovableHabit = null;
+
+                if (data.success) {
+                    var activeBitBreaks = [];
+                    var endedBitBreaks = [];
+                    data.bitBreaks.forEach(function (value) {
+                        // Condition to check if the habit has ended of not
+                        if (value.ended)
+                            endedBitBreaks.push(new BitBreaks(value));
+                        else
+                            activeBitBreaks.push(new BitBreaks(value));
+                    });
+                    mainController.userActiveBitBreaks(activeBitBreaks);
+                    mainController.userEndedBitBreaks(endedBitBreaks);
+                }
+                else {
+                    location.hash = '#/';
+                    window.localStorage.removeItem('user');
+                    messageUtility.showMessages(data.message);
+                }
+            },
+            error: function () {
+                messageUtility.handleError(error);
+            }
+        });
+    },
+
+    '/habit/:hash': function (hash) {
+        $.ajax({
+            type: 'GET',
+            url: '/habits/one/' + hash,
+            success: function (data) {
+                //RESET values to default state
+                mainController.potentiallyRemovableHabit = null;
+                mainController.userActiveBitBreaks.removeAll();
+                mainController.userEndedBitBreaks.removeAll();
+
+                if (data.success) {
+                    $('#calendar').fullCalendar('destory');
+
+                    mainController.currentlySelectedHabit(new BitBreaks(data.bitBreak, data.maxStreak));
+                    var events = [];
+                    for (var i = 0; i < mainController.currentlySelectedHabit().dailyStatus.length; i++)
+                        events.push(new CalendarDates(mainController.currentlySelectedHabit().dailyStatus[i], mainController.currentlySelectedHabit().startDate, i));
+
+                    $('#calendar').fullCalendar({
+                        header: {
+                            left: 'prevYear,nextYear',
+                            center: 'title',
+                            right: 'today prev,next'
+                        },
+                        eventStartEditable: false,
+                        eventDurationEditable: false,
+                        eventClick: function (calEvent, jsEvent, view) {
+                            mainController.currentEvent = calEvent;
+
+                            $('#calendarModal').modal('open');
+                            if (calEvent.title !== 'Nothing Here')
+                                document.getElementById('dailyData').value = calEvent.title;
+                            else
+                                document.getElementById('dailyData').value = '';
+                            document.getElementById('successCheck').checked = calEvent.success;
+                        },
+                        // Try adding dynamic event. Make a function to reuse the calender
+                        // instead of destroying and creating it again and again.
+                        events: events
+                    });
+                }
+                else {
+                    location.hash = '/dashboard';
+                    messageUtility.showMessages(data.message);
+                }
+            },
+            error: function (error) {
+                location.hash = '/dashboard';
+                messageUtility.handleError(error);
+            }
+        });
+    },
+
+    '/': function () {
+        mainController.checkLogin();
+    }
+};
+
+var router = Router(routes);
+router.init();
+
+if (location.hash === '')
+    location.hash = '#/';
