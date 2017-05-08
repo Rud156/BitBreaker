@@ -1,6 +1,7 @@
 /// <reference path='./../javascripts/jquery.d.ts' />
 /// <reference path='./../javascripts/knockoutJS.d.ts' />
 /// <reference path='./../../helpers/utilities.js' />
+/// <reference path="./../javascripts/director.js" />
 /// <reference path="./Models.js" />
 
 var messageUtility = new MessageUtilities();
@@ -307,6 +308,7 @@ function MainController() {
 var mainController = new MainController();
 ko.applyBindings(mainController);
 
+// DirectorJS routes bindings
 var routes = {
     '/dashboard': function () {
         $('#calendar').fullCalendar('destory');

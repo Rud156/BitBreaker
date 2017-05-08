@@ -337,9 +337,10 @@
 
             <!-- Start of calendar holder -->
             <div data-bind="with: currentlySelectedHabit" style="padding-bottom: 30px; font-family: 'Lobster', cursive;">
-                <h3 data-bind="text: title"></h3>
-                <div data-bind="html: description"></div>
+                <h4 data-bind="text: title" class="center"></h4>
+                <div data-bind="html: description" class="center grey-text"></div>
                 <div data-bind="text: 'Max Streak: ' + maxStreak"></div>
+                <div data-bind="text: 'Start Date: ' + startDate"></div>
                 <div id="calendar"></div>
             </div>
             <!-- End of calendar holder -->
