@@ -2,17 +2,22 @@
 <html>
 
 <head>
+    <!-- Check the themeing of full calendar -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="./stylesheets/fullcalendar.min.css" />
     <link rel="stylesheet" href="./stylesheets/fullcalendar.print.css" media="print" />
     <link rel="stylesheet" href="./stylesheets/material_blue.css" />
     <link rel="stylesheet" href="./stylesheets/materialize.css" />
+    <link rel="stylesheet" href="./stylesheets/jquery-ui.css" />
+    <link rel="stylesheet" href="./stylesheets/jquery-ui.structure.css" />
+    <link rel="stylesheet" href="./stylesheets/jquery-ui.theme.css" />
     <link rel="shortcut icon" type="image/x-icon" href="./images/icon.png" />
     <link href="https://fonts.googleapis.com/css?family=Great+Vibes|Lobster|Oleo+Script|Amaranth" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link rel="stylesheet" href="./CSS/Masonry.css" />
     <script src="./javascripts/jquery-3.1.1.js"></script>
+    <script src="./javascripts/jquery-ui.min.js"></script>
     <script src="./javascripts/moment.js"></script>
     <script src="./javascripts/fullcalendar.min.js"></script>
     <script src="./javascripts/materialize.min.js"></script>
@@ -74,17 +79,17 @@
             <ul class="right hide-on-med-and-down">
                 <li data-bind="ifnot: currentUser"><a href="#registerModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
                 <li data-bind="ifnot: currentUser"><a href="#loginModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
+                <li data-bind="if: currentUser"><a href="/#/dashboard" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">DashBoard</a></li>
                 <li data-bind="if: currentUser"><a onclick="window.localStorage.removeItem('user'); window.location.href='/auth/logout'" class="waves-effect waves-light"
                         style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
-                <li data-bind="if: currentUser"><a href="/#/dashboard" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">DashBoard</a></li>
             </ul>
 
             <ul class="side-nav blue" id="mobile-demo">
                 <li data-bind="ifnot: currentUser"><a href="#registerModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
                 <li data-bind="ifnot: currentUser"><a href="#loginModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
+                <li data-bind="if: currentUser"><a href="/#/dashboard" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">DashBoard</a></li>
                 <li data-bind="if: currentUser"><a onclick="window.localStorage.removeItem('user'); window.location.href='/auth/logout'" class="waves-effect waves-light white-text"
                         style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
-                <li data-bind="if: currentUser"><a href="/#/dashboard" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">DashBoard</a></li>
             </ul>
         </div>
     </nav>
@@ -106,7 +111,7 @@
             <a href="#" class="modal-action waves-effect waves-red btn-flat" data-bind="click: deleteHabit">Yes</a>
         </div>
     </div>
-    <!--  End of User Prompt Modal ->
+    <!--  End of User Prompt Modal -->
 
     <!-- Start of Login Modal -->
     <div id="loginModal" class="modal">
@@ -235,7 +240,6 @@
 
     <!-- Start of HomePage Generic holder DIV -->
     <div data-bind="ifnot: currentUser">
-        <!-- TODO: Fix issue regarding the constant quote -->
         <!-- Start of Quotes Holder -->
         <div class="center">
             <div class="grey darken-3 white-text" style="padding-top: 30px; padding-bottom: 30px" data-bind="with: currentQuote">
@@ -293,11 +297,13 @@
                 </h5>
                 <!-- Start of active habits loop holder -->
                 <div class="masonry" data-bind="foreach: userActiveBitBreaks">
-                    <div class="masonry-item" data-bind="click: $root.showHabitDetails">
+                    <div class="masonry-item">
                         <div class="card blue lighten-1 center white-text waves-effect waves-light">
-                            <div class="card-content">
+                            <div style="padding: 10px">
                                 <span class="right waves-effect waves-red" style="cursor: pointer" data-bind="click: $root.removeHabit"><i class="material-icons">delete</i></span>
-                                <span class="right waves-effect waves-red" style="cursor: pointer; margin-right: 3px" data-bind="click: $root.markHabitCompleted"><i class="material-icons">playlist_add_check</i></span>
+                                <span class="right waves-effect waves-red" style="cursor: pointer; margin-right: 3px" data-bind="click: $root.markHabitCompleted"><i class="material-icons">check_circle</i></span>
+                            </div>
+                            <div class="card-content" data-bind="click: $root.showHabitDetails">
                                 <span class="card-title" data-bind="text: title"></span>
                                 <div data-bind="html: description"></div>
                             </div>
@@ -325,8 +331,10 @@
                 <div class="masonry" data-bind="foreach: userEndedBitBreaks">
                     <div class="masonry-item">
                         <div class="card blue lighten-1 center white-text">
-                            <div class="card-content">
+                            <div style="padding: 10px">
                                 <span class="right waves-effect waves-red" style="cursor: pointer" data-bind="click: $root.removeHabit"><i class="material-icons">delete</i></span>
+                            </div>
+                            <div class="card-content">
                                 <span class="card-title" data-bind="text: title"></span>
                                 <div data-bind="html: description"></div>
                             </div>
@@ -339,6 +347,7 @@
 
             <!-- Start of calendar holder -->
             <div data-bind="with: currentlySelectedHabit" style="padding-bottom: 30px; font-family: 'Lobster', cursive;">
+                <div><a href="/#/dashboard"><i class="material-icons" style="font-size: 40px">arrow_back</i></a></div>
                 <h4 data-bind="text: title" class="center"></h4>
                 <div data-bind="html: description" class="center grey-text"></div>
                 <div data-bind="text: 'Max Streak: ' + maxStreak"></div>

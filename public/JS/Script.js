@@ -372,6 +372,7 @@ var routes = {
                             center: 'title',
                             right: 'today prev,next'
                         },
+                        theme: true,
                         eventStartEditable: false,
                         eventDurationEditable: false,
                         eventClick: function (calEvent, jsEvent, view) {

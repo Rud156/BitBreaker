@@ -107,6 +107,9 @@ router.patch('/endhabit/:hash', utilities.checkAuthentication, function (req, re
             return res.json({ success: false, message: 'You are not the creator of this habit. So you cannot end it...' });
 
         bitObject.ended = true;
+        var date = new Date();
+        bitObject.totalDays = utilities.dateDiff(bitObject.startDate, date);
+        
         bitObject.save(function (err, updatedObject) {
             if (err)
                 throw err;

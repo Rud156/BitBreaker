@@ -5,8 +5,8 @@ var iFrame = null;
 tinymce.init({
     selector: '#bitDescription',
     theme: 'modern',
-    plugins: ['image textcolor spellchecker insertdatetime table searchreplace link emoticons colorpicker textcolor autoresize imagetools paste'],
-    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | link image | bullist numlist outdent indent | emoticons forecolor`',
+    plugins: ['code advlist image imagetools link colorpicker paste table textcolor emoticons'],
+    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | link image | bullist numlist outdent indent | emoticons forecolor',
     setup: function (editor) {
         editor.on('init', function (e) {
             iFrame = document.getElementById('bitDescription_ifr');
