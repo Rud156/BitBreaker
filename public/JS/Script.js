@@ -395,6 +395,10 @@ var routes = {
                         // instead of destroying and creating it again and again.
                         events: events
                     });
+
+                    if (mainController.currentlySelectedHabit().ended) {
+                        $('#calendar').fullCalendar('gotoDate', mainController.currentlySelectedHabit().endDate);
+                    }
                 }
                 else {
                     location.hash = '/dashboard';

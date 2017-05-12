@@ -26,7 +26,7 @@ function BitBreaks(habitObject, maxStreak) {
     this.description = decodeURI(habitObject.description);
     this.startDate = new Date(habitObject.startDate);
     this.totalDays = habitObject.totalDays;
-    this.maxStreak = maxStreak ? maxStreak : null;
+    this.maxStreak = (maxStreak !== undefined || maxStreak !== null) ? maxStreak : null;
 
     this.foreverHabit = habitObject.foreverHabit;
 

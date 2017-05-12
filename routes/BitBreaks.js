@@ -104,7 +104,7 @@ router.patch('/endhabit/:hash', utilities.checkAuthentication, function (req, re
         bitObject.ended = true;
         var date = new Date();
         bitObject.totalDays = utilities.dateDiff(bitObject.startDate, date);
-        
+
         bitObject.save(function (err, updatedObject) {
             if (err)
                 throw err;
