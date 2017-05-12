@@ -25,7 +25,9 @@
     <script src="./javascripts/director.js"></script>
     <script src="./javascripts/tinymce.min.js"></script>
     <script src="./javascripts/flatpickr.js"></script>
+    
     <script src="utilities.js"></script>
+    <script src="./JS/Components/HabitCards.js"></script>
     <title>Bit Breaker</title>
     <style>
         html,
@@ -297,23 +299,7 @@
                 </h5>
                 <!-- Start of active habits loop holder -->
                 <div class="masonry" data-bind="foreach: userActiveBitBreaks">
-                    <div class="masonry-item">
-                        <div class="card blue lighten-1 center white-text waves-effect waves-light">
-                            <div style="padding: 10px">
-                                <span class="right waves-effect waves-red" style="cursor: pointer" data-bind="click: $root.removeHabit"><i class="material-icons">delete</i></span>
-                                <span class="right waves-effect waves-red" style="cursor: pointer; margin-right: 3px" data-bind="click: $root.markHabitCompleted"><i class="material-icons">check_circle</i></span>
-                            </div>
-                            <div class="card-content" data-bind="click: $root.showHabitDetails">
-                                <span class="card-title" data-bind="text: title"></span>
-                                <div data-bind="html: description"></div>
-                            </div>
-                            <div class="card-action">
-                                <div data-bind="ifnot: foreverHabit">Days Left: <span data-bind="text: daysLeft"></span></div>
-                                <div data-bind="ifnot: foreverHabit">Ending Date: <span data-bind="text: endDate.toDateString()"></span></div>
-                                <div data-bind="if: foreverHabit">Looks like you have &#8734; time left. Try to make the best use of it.</div>
-                            </div>
-                        </div>
-                    </div>
+                    <habit-card params="data: $data, root: $root"></habit-card>
                 </div>
                 <!-- End of active habits loop holder -->
             </div>
@@ -329,17 +315,7 @@
                 </h5>
                 <!-- Start of ended habits loop holder -->
                 <div class="masonry" data-bind="foreach: userEndedBitBreaks">
-                    <div class="masonry-item">
-                        <div class="card blue lighten-1 center white-text">
-                            <div style="padding: 10px">
-                                <span class="right waves-effect waves-red" style="cursor: pointer" data-bind="click: $root.removeHabit"><i class="material-icons">delete</i></span>
-                            </div>
-                            <div class="card-content">
-                                <span class="card-title" data-bind="text: title"></span>
-                                <div data-bind="html: description"></div>
-                            </div>
-                        </div>
-                    </div>
+                    <habit-card params="data: $data, root: $root"></habit-card>
                 </div>
                 <!-- End of ended habits loop holder -->
             </div>

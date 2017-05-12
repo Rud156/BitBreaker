@@ -209,6 +209,11 @@ function MainController() {
         if (!foreverCheck)
             totalDays = utilityFunctions.dateDiff(startDate, endDate);
 
+        document.getElementById('bitTitle').value = '';
+        iFrame.document.body.innerHTML = '';
+        document.getElementById('bitEndDate').value = '';
+        document.getElementById('foreverCheck').checked = false;
+
         var dataSet = {
             title: title,
             description: description,
@@ -239,6 +244,7 @@ function MainController() {
     // Function to accept prompt from user to remove a habit
     self.removeHabit = function (habitObject) {
         self.potentiallyRemovableHabit = habitObject;
+        console.log(habitObject);
         $('#promptModal').modal('open');
     };
 
