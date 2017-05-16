@@ -103,6 +103,7 @@ router.patch('/endhabit/:hash', utilities.checkAuthentication, function (req, re
 
         bitObject.ended = true;
         var date = new Date();
+        date.setUTCHours(0, 0, 0, 0);
         bitObject.totalDays = utilities.dateDiff(bitObject.startDate, date);
 
         bitObject.save(function (err, updatedObject) {
@@ -147,7 +148,6 @@ router.post('/save', utilities.checkAuthentication, function (req, res, next) {
     }
 
     var hash = crypto.createHash('sha256').update(title + username).digest('hex');
-    // startDate.setHours(0, 0, 0, 0);
 
     Model.BitBreaks.findOne({ hash: hash }, function (err, bitBreakObject) {
         if (err)
