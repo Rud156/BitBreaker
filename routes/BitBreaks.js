@@ -127,7 +127,6 @@ router.post('/save', utilities.checkAuthentication, function (req, res, next) {
     var dailyStatus = [];
     var ended = false;
 
-    // TODO: After building front end change typeof(startDate) to 'object'
     if (title === undefined || description === undefined || startDate === undefined || totalDays === undefined ||
         forever === undefined || username === undefined || typeof (title) !== 'string' || typeof (description) !== 'string' ||
         typeof (startDate) !== 'string' || typeof (totalDays) !== 'number' || typeof (forever) !== 'boolean' || typeof (username) !== 'string') {
