@@ -16,7 +16,6 @@ const HabitDetails = {
     },
     methods: {
         fetchHabit() {
-            console.log(this.hash);
             $.ajax({
                 type: 'GET',
                 url: '/habits/one/' + this.hash,

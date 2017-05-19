@@ -20,7 +20,7 @@ Vue.component('nav-bar', {
         <nav>
             <div class="nav-wrapper blue">
                 <a class="brand-logo center" style="font-family: 'Oleo Script', cursive">Bit Breaker</a>
-                <a href="#" class="hide-on-med-and-down">
+                <a class="hide-on-med-and-down">
                     <img src="./images/icon.png" alt="Brand Logo" style="padding-left: 14px; height: 95%; padding-top: 3px" />
                 </a>
 

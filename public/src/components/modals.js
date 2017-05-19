@@ -81,19 +81,19 @@ Vue.component('register-modal', {
             <div class="modal-content light-blue darken-4">
                 <div class="row white-text">
                     <div class="input-field col s12">
-                        <input id="registerUsername" type="text" class="validate">
+                        <input id="registerUsername" type="text" class="validate" v-model="username">
                         <label for="registerUsername">User Name: </label>
                     </div>
                 </div>
                 <div class="row white-text">
                     <div class="input-field col s12">
-                        <input id="registerPassword" type="password" class="validate">
+                        <input id="registerPassword" type="password" class="validate" v-model="password">
                         <label for="registerPassword">Password: </label>
                     </div>
                 </div>
                 <div class="row white-text">
                     <div class="input-field col s12">
-                        <input id="registerRePassword" type="password" class="validate">
+                        <input id="registerRePassword" type="password" class="validate" v-model="rePassword">
                         <label for="registerRePassword">Re-Enter Password: </label>
                     </div>
                 </div>
