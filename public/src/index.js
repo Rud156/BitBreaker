@@ -3,7 +3,13 @@ var messageUtility = new MessageUtilities();
 
 const routes = [
     { path: '/', component: HomePage },
-    { path: '/dashboard', component: DashBoard },
+    {
+        path: '/user', component: UserPage,
+        children: [
+            { path: 'dashboard', component: DashBoard },
+            { path: 'habit/:hash', component: HabitDetails, props: true}
+        ]
+    },
     { path: '*', redirect: '/' }
 ];
 
@@ -14,7 +20,7 @@ router.beforeEach((to, from, next) => {
     if (to.path === '/') {
         if (window.localStorage.getItem('user') !== null) {
             userObject = { username: window.localStorage.getItem('user') };
-            router.push({ path: 'dashboard' });
+            router.push({ path: 'user/dashboard' });
         }
         else
             next();

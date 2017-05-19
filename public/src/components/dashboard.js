@@ -1,7 +1,26 @@
 const DashBoard = {
+    props: {
+        activeHabits: {
+            type: Array,
+            required: true
+        },
+        endedHabits: {
+            type: Array,
+            required: true
+        },
+        markComplete: {
+            type: Function,
+            required: true
+        },
+        removeHabit: {
+            type: Function,
+            required: true
+        }
+    },
     template: `
         <div>
-            <nav-bar :logged-in="true"></nav-bar>
+            <user-prompt-modal :accept="userAccepts" :deny="userDenies"></user-prompt-modal>
+
             <div class="container">
                 <div>
                     <h3 class="center">
@@ -11,7 +30,7 @@ const DashBoard = {
                         You don't seem to have any active habits
                     </h5>
                     <div class="masonry">
-                        <habit-card v-for="habit in activeHabits" :key="habit.hash" :habit="habit" :remove-habit="removeHabit" :mark-complete="markComplete"></habit-card>
+                        <habit-card v-for="habit in activeHabits" :key="habit.hash" :habit="habit" :remove-habit="setPotentiallyRemoveAbleHabit" :mark-complete="markComplete"></habit-card>
                     </div>
                 </div>
                 <div style="padding-top: 50px">
@@ -22,14 +41,8 @@ const DashBoard = {
                         You don't seem to have any completed habits
                     </h5>
                     <div class="masonry">
-                        <habit-card v-for="habit in endedHabits" :key="habit.hash" :remove-habit="removeHabit" :habit="habit"></habit-card>
+                        <habit-card v-for="habit in endedHabits" :key="habit.hash" :remove-habit="setPotentiallyRemoveAbleHabit" :habit="habit"></habit-card>
                     </div>
-                </div>
-
-                <div class="fixed-action-btn">
-                    <a class="btn-floating btn-large purple waves-effect waves-light" href="#editorModal">
-                        <i class="large material-icons">mode_edit</i>
-                    </a>
                 </div>
             </div>
         </div>
@@ -40,45 +53,31 @@ const DashBoard = {
         }
     },
     mounted() {
-        this.fetchAllHabits();
+
     },
     methods: {
-        fetchAllHabits() {
-            $.ajax({
-                type: 'GET',
-                url: '/habits/all',
-                success: (data) => {
-                    if (data.success) {
-                        data.bitBreaks.forEach((element) => {
-                            if (element.ended)
-                                this.endedHabits.push(new BitBreaks(element));
-                            else
-                                this.activeHabits.push(new BitBreaks(element));
-                        });
-                    }
-                    else {
-                        messageUtility.showMessages(data.message);
-                        window.localStorage.removeItem('user');
-                        router.push({ path: '/' });
-                    }
-                },
-                error: (error) => {
-                    messageUtility.handleError(error);
-                }
-            });
+        userAccepts() {
+            if (!this.potentiallyRemovableHabit) {
+                messageUtility.showMessages('No habit marked for deletion!!! You\'re not playing fair!!!');
+                return;
+            }
+            $('#promptModal').modal('close');
+            this.removeHabit(this.potentiallyRemovableHabit);
+            this.potentiallyRemovableHabit = null;
         },
-        removeHabit(habit) {
-            console.log(habit);
+        userDenies() {
+            this.potentiallyRemovableHabit = null;
+            $('#promptModal').modal('close');
         },
-        markComplete(habit) {
-            console.log(habit);
+        setPotentiallyRemoveAbleHabit(habit) {
+            this.potentiallyRemovableHabit = habit;
+            $('#promptModal').modal('open');
         }
     },
     data() {
         return {
             user: userObject,
-            activeHabits: [],
-            endedHabits: []
+            potentiallyRemovableHabit: null
         };
     }
 };

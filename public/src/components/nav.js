@@ -24,24 +24,30 @@ Vue.component('nav-bar', {
                     <img src="./images/icon.png" alt="Brand Logo" style="padding-left: 14px; height: 95%; padding-top: 3px" />
                 </a>
 
-                <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+                <a style="cursor: pointer" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
 
                 <ul class="right hide-on-med-and-down">
                     <li v-if="!loggedIn"><a href="#registerModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
                     <li v-if="!loggedIn"><a href="#loginModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
-                    <li v-if="loggedIn"><router-link v-bind:to="'dashboard'" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">DashBoard</router-link></li>
+                    <li v-if="loggedIn"><router-link to="/user/dashboard" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">DashBoard</router-link></li>
                     <li v-if="loggedIn"><a v-on:click="logoutUser" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
                 </ul>
 
                 <ul class="side-nav blue" id="mobile-demo">
                     <li v-if="!loggedIn"><a href="#registerModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
                     <li v-if="!loggedIn"><a href="#loginModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
-                    <li v-if="loggedIn"><router-link v-bind:to="'dashboard'" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">DashBoard</router-link></li>
+                    <li v-if="loggedIn"><router-link to="/user/dashboard" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">DashBoard</router-link></li>
                     <li v-if="loggedIn"><a v-on:click="logoutUser" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
                 </ul>
             </div>
         </nav>
     `,
+    mounted() {
+        $(".button-collapse").sideNav({
+            draggable: true,
+            closeOnClick: true
+        });
+    },
     methods: {
         logoutUser() {
             window.localStorage.removeItem('user');

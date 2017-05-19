@@ -64,9 +64,12 @@ const HomePage = {
             <!-- Start of Quotes Holder -->
             <div class="center">
                 <div class="grey darken-3 white-text" style="padding-top: 30px; padding-bottom: 30px">
-                    <blockquote class="white-text" style="margin: 0">{{pageQuote.quote}}</blockquote>
-                    <div class="container" style="text-align: right">
+                    <blockquote v-if="pageQuote.quote" class="white-text" style="margin: 0">{{pageQuote.quote}}</blockquote>
+                    <div v-if="pageQuote.author" class="container" style="text-align: right">
                         <h4 style="margin: 0">{{pageQuote.author}}</h4>
+                    </div>
+                    <div class="container" v-if="!pageQuote.quote">
+                        <circular-spinner></circular-spinner>
                     </div>
                 </div>
             </div>
@@ -105,8 +108,8 @@ const HomePage = {
                 'We hope that you wil find this website useful and achieve your goals that you set!!!'
             ],
             pageQuote: {
-                quote: 'There should be something here. If you\'re seeing this, please wait a moment...',
-                author: ''
+                quote: null,
+                author: null
             }
         };
     }

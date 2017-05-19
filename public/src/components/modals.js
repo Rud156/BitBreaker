@@ -52,7 +52,7 @@ Vue.component('login-modal', {
 
                         window.localStorage.setItem('user', userObject.username);
                         $('#loginModal').modal('close');
-                        router.push({ path: 'dashboard' });
+                        router.push({ path: 'user/dashboard' });
                     }
                     else {
                         messageUtility.showMessages(data.message);
@@ -152,13 +152,34 @@ Vue.component('register-modal', {
     }
 });
 
-Vue.component('editor-modal', {
+Vue.component('user-prompt-modal', {
     props: {
-        saveNewHabit: {
+        accept: {
+            type: Function,
+            required: true
+        },
+        deny: {
             type: Function,
             required: true
         }
     },
+    template: `
+        <div id="promptModal" class="modal">
+            <div class="modal-content center">
+                <h5>Do you really want to delete this habit?</h5>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-action waves-effect waves-green btn-flat" @click="deny">No</button>
+                <button class="modal-action waves-effect waves-red btn-flat" @click="accept">Yes</button>
+            </div>
+        </div>
+    `,
+    mounted() {
+        $("#promptModal").modal();
+    }
+});
+
+Vue.component('editor-modal', {
     template: `
         <div id="editorModal" class="modal">
             <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
@@ -212,7 +233,7 @@ Vue.component('editor-modal', {
                 plugins: ['code advlist image imagetools link colorpicker paste table textcolor emoticons'],
                 toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | link image | bullist numlist outdent indent | emoticons forecolor',
                 setup: (editor) => {
-                    editor.on('init', function (e) {
+                    editor.on('init', (e) => {
                         this.iFrame = document.getElementById('bitDescription_ifr');
                         this.iFrame = this.iFrame.contentWindow || this.iFrame.contentDocument;
                     });
@@ -265,7 +286,7 @@ Vue.component('editor-modal', {
                         document.getElementById('bitEndDate').value = '';
 
                         $('#editorModal').modal('close');
-                        this.$emit('addNewHabit', data.bitBreak);
+                        this.$emit('add-new-habit', data.bitBreak);
                     }
                     else
                         messageUtility.showMessages(data.message);
