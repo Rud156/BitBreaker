@@ -12,22 +12,23 @@
     <link rel="stylesheet" href="./stylesheets/jquery-ui.css" />
     <link rel="stylesheet" href="./stylesheets/jquery-ui.structure.css" />
     <link rel="stylesheet" href="./stylesheets/jquery-ui.theme.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="./images/icon.png" />
     <link href="https://fonts.googleapis.com/css?family=Great+Vibes|Lobster|Oleo+Script|Amaranth" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link rel="stylesheet" href="./CSS/Masonry.css" />
     <script src="./javascripts/jquery-3.1.1.js"></script>
     <script src="./javascripts/jquery-ui.min.js"></script>
+    <script src="./javascripts/vue.js"></script>
+    <script src="./javascripts/vue-router.js"></script>
     <script src="./javascripts/moment.js"></script>
     <script src="./javascripts/fullcalendar.min.js"></script>
     <script src="./javascripts/materialize.min.js"></script>
-    <script src="./javascripts/knockout-3.4.2.js"></script>
-    <script src="./javascripts/director.js"></script>
     <script src="./javascripts/tinymce.min.js"></script>
     <script src="./javascripts/flatpickr.js"></script>
-    
+
+    <script src="./JS/Models.js"></script>
     <script src="utilities.js"></script>
-    <script src="./JS/Components/HabitCards.js"></script>
+
+    <link rel="shortcut icon" type="image/x-icon" href="./images/icon.png" />
     <title>Bit Breaker</title>
     <style>
         html,
@@ -42,7 +43,7 @@
         blockquote {
             padding-top: 30px;
             font-size: 40px;
-            font-family: 'Great Vibes', cursive;
+            font-family: 'Great Vibes', 'Roboto', cursive;
         }
 
         label {
@@ -51,323 +52,44 @@
 
         .carousel-item h2 {
             font-size: 35px;
-            font-family: 'Lobster', cursive;
+            font-family: 'Lobster', 'Roboto', cursive;
             padding-top: 10px;
         }
 
         .infoText {
             font-size: 35px;
             padding-top: 20px;
-            font-family: 'Amaranth', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Amaranth', 'Roboto', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         #displayContainer {
-            font-family: 'Oleo Script', cursive;
+            font-family: 'Oleo Script', 'Roboto', cursive;
         }
     </style>
 </head>
 
 <body>
-    <!-- Start of NavBar -->
-    <nav>
-        <div class="nav-wrapper blue">
-            <a class="brand-logo center" data-bind="attr: {href: currentUser() ? '/#/dashboard' : '/#/'}" style="font-family: 'Oleo Script', cursive">Bit Breaker</a>
-            <a href="#" class="hide-on-med-and-down">
-                <img src="./images/icon.png" alt="Brand Logo" style="padding-left: 14px; height: 95%; padding-top: 3px" />
-            </a>
 
-            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-
-            <ul class="right hide-on-med-and-down">
-                <li data-bind="ifnot: currentUser"><a href="#registerModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
-                <li data-bind="ifnot: currentUser"><a href="#loginModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
-                <li data-bind="if: currentUser"><a href="/#/dashboard" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">DashBoard</a></li>
-                <li data-bind="if: currentUser"><a onclick="window.localStorage.removeItem('user'); window.location.href='/auth/logout'" class="waves-effect waves-light"
-                        style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
-            </ul>
-
-            <ul class="side-nav blue" id="mobile-demo">
-                <li data-bind="ifnot: currentUser"><a href="#registerModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
-                <li data-bind="ifnot: currentUser"><a href="#loginModal" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Login</a></li>
-                <li data-bind="if: currentUser"><a href="/#/dashboard" class="waves-effect waves-light white-text" style="font-family: 'Amaranth', sans-serif; font-size: 20px">DashBoard</a></li>
-                <li data-bind="if: currentUser"><a onclick="window.localStorage.removeItem('user'); window.location.href='/auth/logout'" class="waves-effect waves-light white-text"
-                        style="font-family: 'Amaranth', sans-serif; font-size: 20px">Logout</a></li>
-            </ul>
-        </div>
-    </nav>
-    <!-- End of NavBar -->
-
-    <!-- Start of Alert Modal -->
+    
     <div id="alertModal" class="modal">
         <div class="modal-content center" id="alertModalContent"></div>
     </div>
-    <!-- End of Alert Modal -->
-
-    <!-- Start of User Prompt Modal -->
-    <div id="promptModal" class="modal">
-        <div class="modal-content center">
-            <h5>Do you really want to delete this habit?</h5>
-        </div>
-        <div class="modal-footer">
-            <a href="#" class="modal-action waves-effect waves-green btn-flat" data-bind="click: cancelDeletion">No</a>
-            <a href="#" class="modal-action waves-effect waves-red btn-flat" data-bind="click: deleteHabit">Yes</a>
-        </div>
+    
+    <div id="app">
+        <router-view></router-view>
+        <page-footer></page-footer>
     </div>
-    <!--  End of User Prompt Modal -->
 
-    <!-- Start of Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
-            <h5>Login Here...</h5>
-        </div>
-        <div class="modal-content light-blue darken-4">
-            <div class="row white-text">
-                <div class="input-field col s12">
-                    <input id="loginUsername" type="text" class="validate">
-                    <label for="loginUsername">User Name: </label>
-                </div>
-            </div>
-            <div class="row white-text">
-                <div class="input-field col s12">
-                    <input id="loginPassword" type="password" class="validate">
-                    <label for="loginPassword">Password: </label>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer light-blue darken-4">
-            <button class="waves-effect waves-light btn right z-depth-2" style="margin-right: 14px; background: #e54d03" data-bind="click: loginUser">
-                Login !!!
-            </button>
-        </div>
-    </div>
-    <!-- End of Login Modal -->
-
-    <!-- Start of Register Modal -->
-    <div id="registerModal" class="modal">
-        <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
-            <h5>Register Here...</h5>
-        </div>
-        <div class="modal-content light-blue darken-4">
-            <div class="row white-text">
-                <div class="input-field col s12">
-                    <input id="registerUsername" type="text" class="validate">
-                    <label for="registerUsername">User Name: </label>
-                </div>
-            </div>
-            <div class="row white-text">
-                <div class="input-field col s12">
-                    <input id="registerPassword" type="password" class="validate">
-                    <label for="registerPassword">Password: </label>
-                </div>
-            </div>
-            <div class="row white-text">
-                <div class="input-field col s12">
-                    <input id="registerRePassword" type="password" class="validate">
-                    <label for="registerRePassword">Re-Enter Password: </label>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer light-blue darken-4">
-            <button class="waves-effect waves-light btn red right z-depth-2" style="margin-right: 14px; background: #e54d03" data-bind="click: registerUser">
-                Register !!!
-            </button>
-        </div>
-    </div>
-    <!-- End of Register Modal -->
-
-    <!-- Start of Editor Modal -->
-    <div id="editorModal" class="modal">
-        <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
-            <h5>New Habit</h5>
-        </div>
-        <div class="modal-content purple lighten-1" style="font-family: 'Lobster', cursive">
-            <div class="row white-text">
-                <div class="input-field col s12">
-                    <input id="bitTitle" type="text" class="validate">
-                    <label for="bitTitle">Habit Title: </label>
-                </div>
-            </div>
-            <div class="row white-text">
-                <div class="col s12 center">
-                    <label for="bitDescription" style="font-size: 1rem">Habit Description:</label>
-                    <textarea id="bitDescription"></textarea>
-                </div>
-            </div>
-            <div class="row white-text">
-                <div class="col s12 center">
-                    <label for="bitEndDate" style="font-size: 1rem">End Date: </label>
-                    <input type="text" class="flatpickr tooltipped white-text" data-position="top" data-tooltip="Click to select date..." id="bitEndDate"
-                        placeholder="Select ending date if the habit is not valid forever..." />
-                </div>
-            </div>
-            <div class="row white-text">
-                <div class="col s12 center">
-                    <input type="checkbox" class="filled-in" id="foreverCheck" />
-                    <label for="foreverCheck">Is the habit valid forever?</label>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer purple">
-            <button class="waves-effect waves-light btn red right z-depth-2" style="margin-right: 14px" data-bind="click: saveNewHabit">
-                Save Habit
-            </button>
-        </div>
-    </div>
-    <!-- End of Editor Modal -->
-
-    <!-- Start of Calendar Modal -->
-    <div id="calendarModal" class="modal">
-        <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
-            <h5>Edit Day Details</h5>
-        </div>
-        <div class="modal-content purple lighten-1" style="font-family: 'Lobster', cursive">
-            <div class="row">
-                <div class="input-field col s12 center">
-                    <input type="checkbox" id="successCheck" class="filled-in" />
-                    <label for="successCheck" style="font-size: 20px">Succeeded</label>
-                </div>
-                <div class="input-field col s12">
-                    <textarea id="dailyData" class="materialize-textarea" data-length="120"></textarea>
-                    <label for="dailyData">Enter Daily Progress Here...</label>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer purple">
-            <button class="waves-effect waves-light btn red right z-depth-2" style="margin-right: 14px" data-bind="click: saveDailyData">
-                Save
-            </button>
-        </div>
-    </div>
-    <!-- End of Calendar Modal -->
-
-    <!-- Start of HomePage Generic holder DIV -->
-    <div data-bind="ifnot: currentUser">
-        <!-- Start of Quotes Holder -->
-        <div class="center">
-            <div class="grey darken-3 white-text" style="padding-top: 30px; padding-bottom: 30px" data-bind="with: currentQuote">
-                <blockquote class="white-text" style="margin: 0" data-bind="text: quote"></blockquote>
-                <div class="container" style="text-align: right">
-                    <h4 style="margin: 0" data-bind="text: '---  ' + author"></h4>
-                </div>
-            </div>
-        </div>
-        <!-- End of Quotes Holder -->
-
-        <!-- Start of About Slider -->
-        <div class="carousel carousel-slider center" id="aboutSlider" data-indicators="true">
-            <div class="carousel-item green darken-3 white-text" href="#one!">
-                <h2 style="font-size: 40px;">What This Website is About: </h2>
-                <div class="white-text infoText">
-                    <div class="container">
-                        This is a simple webiste to break any habit or to keep yourself motivated to do something new...
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item purple darken-4 white-text" href="#two!">
-                <h2 style="font-size: 40px;">How to get started: </h2>
-                <div class="white-text infoText">
-                    <div class="container">
-                        Just create an account and we'll try to keep you motivated till you complete you're goals...
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item orange darken-2 white-text" href="#three!">
-                <h2 style="font-size: 40px;">Anything Else: </h2>
-                <div class="white-text infoText">
-                    <div class="container">
-                        We hope that you wil find this website useful and achieve your goals that you set!!!
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- End of About Slider -->
-    </div>
-    <!-- End of Homepage Generic Holder DIV -->
-
-    <!-- Start of DashBoard Generic Holder DIV -->
-    <div data-bind="if: currentUser">
-        <!--<h3>This is the dashboard of user <span data-bind="text: currentUser().userName"></span></h3>-->
-        <div class="container" id="displayContainer">
-
-            <!-- Start of Active Habit Holder -->
-            <div data-bind="ifnot: currentlySelectedHabit">
-                <h3 class="center">
-                    Currently Active Habits:
-                </h3>
-                <h5 class="center grey-text" style="font-family: 'Amaranth', Tahoma, Geneva, Verdana, sans-serif" data-bind="visible: userActiveBitBreaks().length === 0">
-                    You don't seem to have any active habits
-                </h5>
-                <!-- Start of active habits loop holder -->
-                <div class="masonry" data-bind="foreach: userActiveBitBreaks">
-                    <habit-card params="data: $data, root: $root"></habit-card>
-                </div>
-                <!-- End of active habits loop holder -->
-            </div>
-            <!-- End of Active Habit Holder -->
-
-            <!-- Start of Ended or Expired Habit Holder -->
-            <div style="padding-top: 50px" data-bind="ifnot: currentlySelectedHabit">
-                <h3 class="center">
-                    Ended Habits:
-                </h3>
-                <h5 class="center grey-text" style="font-family: 'Amaranth', Tahoma, Geneva, Verdana, sans-serif" data-bind="visible: userEndedBitBreaks().length === 0">
-                    You don't seem to have any completed habits
-                </h5>
-                <!-- Start of ended habits loop holder -->
-                <div class="masonry" data-bind="foreach: userEndedBitBreaks">
-                    <habit-card params="data: $data, root: $root"></habit-card>
-                </div>
-                <!-- End of ended habits loop holder -->
-            </div>
-            <!-- End of Ended or Expired Habit Holder -->
-
-            <!-- Start of calendar holder -->
-            <div data-bind="with: currentlySelectedHabit" style="padding-bottom: 30px; font-family: 'Lobster', cursive;">
-                <div><a href="/#/dashboard"><i class="material-icons" style="font-size: 40px">arrow_back</i></a></div>
-                <h4 data-bind="text: title" class="center"></h4>
-                <div data-bind="html: description" class="center grey-text"></div>
-                <div data-bind="text: 'Max Streak: ' + maxStreak"></div>
-                <div data-bind="text: 'Start Date: ' + startDate"></div>
-                <div id="calendar"></div>
-            </div>
-            <!-- End of calendar holder -->
-        </div>
-
-        <!-- Start of Fixed Action Button -->
-        <div class="fixed-action-btn">
-            <a class="btn-floating btn-large purple waves-effect waves-light" href="#editorModal">
-                <i class="large material-icons">mode_edit</i>
-            </a>
-        </div>
-        <!-- End of Fixed Action Button -->
-
-    </div>
-    <!-- End if DashBoard Generic Holder DIV -->
-
-    <!-- Start of Footer -->
-    <div class="blue darken-4" style="padding: 14px 0; font-family: 'Lobster', cursive">
-        <div class="container white-text">
-            © 2017 Copyright
-            <a href="https://www.github.com/Rud156" target="_blank" class="white-text right"> Desgined with 💗 by: Rud156 </a>
-        </div>
-    </div>
-    <!-- End of Footer -->
+    <script src="./lib/components/modals.js"></script>
+    <script src="./lib/components/nav.js"></script>
+    <script src="./lib/components/homepage.js"></script>
+    <script src="./lib/Components/habit_card.js"></script>
+    <script src="./lib/Components/dashboard.js"></script>
+    <script src="./lib/index.js"></script>
 
     <script>
-        $('.modal').modal();
-        $(".button-collapse").sideNav();
-        $('.carousel.carousel-slider').carousel({ fullWidth: true });
-        $('.tooltipped').tooltip({ delay: 0 });
-        $('textarea#dailyData').characterCounter();
+        $('#alertModal').modal();
     </script>
-    <script>
-        window.setInterval(function () {
-            $("#aboutSlider").carousel('next');
-        }, 7000);
-    </script>
-    <script src="./JS/ScriptInitiators.js"></script>
-    <script src="./JS/Models.js"></script>
-    <script src="./JS/Script.js"></script>
 </body>
 
 </html>
