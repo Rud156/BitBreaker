@@ -15,6 +15,10 @@ const DashBoard = {
         removeHabit: {
             type: Function,
             required: true
+        },
+        loading: {
+            type: Boolean,
+            required: true
         }
     },
     template: `
@@ -26,9 +30,10 @@ const DashBoard = {
                     <h3 class="center">
                         Currently Active Habits:
                     </h3>
-                    <h5 class="center grey-text" style="font-family: 'Amaranth', Tahoma, Geneva, Verdana, sans-serif" v-if="activeHabits.length === 0">
+                    <h5 class="center grey-text" style="font-family: 'Amaranth', Tahoma, Geneva, Verdana, sans-serif" v-if="activeHabits.length === 0 && !loading">
                         You don't seem to have any active habits
                     </h5>
+                    <load-animation v-if="loading"></load-animation>
                     <div class="masonry">
                         <habit-card v-for="habit in activeHabits" :key="habit.hash" :habit="habit" :remove-habit="setPotentiallyRemoveAbleHabit" :mark-complete="markComplete"></habit-card>
                     </div>
@@ -37,9 +42,10 @@ const DashBoard = {
                     <h3 class="center">
                         Ended Habits:
                     </h3>
-                    <h5 class="center grey-text" style="font-family: 'Amaranth', Tahoma, Geneva, Verdana, sans-serif" v-if="endedHabits.length === 0">
+                    <h5 class="center grey-text" style="font-family: 'Amaranth', Tahoma, Geneva, Verdana, sans-serif" v-if="endedHabits.length === 0 && !loading">
                         You don't seem to have any completed habits
                     </h5>
+                    <load-animation v-if="loading"></load-animation>
                     <div class="masonry">
                         <habit-card v-for="habit in endedHabits" :key="habit.hash" :remove-habit="setPotentiallyRemoveAbleHabit" :habit="habit"></habit-card>
                     </div>

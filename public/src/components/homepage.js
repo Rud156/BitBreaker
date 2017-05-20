@@ -69,7 +69,7 @@ const HomePage = {
                         <h4 style="margin: 0">{{pageQuote.author}}</h4>
                     </div>
                     <div class="container" v-if="!pageQuote.quote">
-                        <circular-spinner></circular-spinner>
+                        <load-animation></load-animation>
                     </div>
                 </div>
             </div>
