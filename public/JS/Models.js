@@ -42,13 +42,14 @@ function BitBreaks(habitObject, maxStreak) {
 
 // Function to create dates specific to fullCalendar.io
 function CalendarDates(dailyData, startDate, index) {
+    this.id = index;
     this.title = dailyData.quote;
     this.color = dailyData.success === false ? 'red' : 'green';
     this.success = dailyData.success;
 
     this.start = new Date(startDate.getTime());
     this.start.setDate(startDate.getDate() + index);
-    this.start = this.start.toISOString();
+    // this.start = this.start.toISOString();
 
     this.allDay = true;
 }

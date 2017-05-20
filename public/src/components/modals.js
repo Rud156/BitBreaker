@@ -19,11 +19,11 @@ Vue.component('login-modal', {
                         <label for="loginPassword">Password: </label>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer light-blue darken-4">
-                <button class="waves-effect waves-light btn right z-depth-2" style="margin-right: 14px; background: #e54d03" v-on:click="loginUser">
-                    Login !!!
-                </button>
+                <div class="row">
+                    <button class="waves-effect waves-light btn right z-depth-2" style="margin-right: 14px; background: #e54d03" v-on:click="loginUser">
+                        Login !!!
+                    </button>
+                </div>
             </div>
         </div>
     `,
@@ -97,11 +97,11 @@ Vue.component('register-modal', {
                         <label for="registerRePassword">Re-Enter Password: </label>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer light-blue darken-4">
-                <button class="waves-effect waves-light btn red right z-depth-2" style="margin-right: 14px; background: #e54d03" v-on:click="registerUser">
-                    Register !!!
-                </button>
+                <div class="row">
+                    <button class="waves-effect waves-light btn red right z-depth-2" style="margin-right: 14px; background: #e54d03" v-on:click="registerUser">
+                        Register !!!
+                    </button>
+                </div>
             </div>
         </div>
     `,
@@ -195,6 +195,7 @@ Vue.component('editor-modal', {
                 <div class="row white-text">
                     <div class="col s12 center">
                         <label for="bitDescription" style="font-size: 1rem">Habit Description:</label>
+                        <br />
                         <textarea id="bitDescription"></textarea>
                     </div>
                 </div>
@@ -238,7 +239,9 @@ Vue.component('editor-modal', {
                         this.iFrame = this.iFrame.contentWindow || this.iFrame.contentDocument;
                     });
                 },
-                default_link_target: '_blank'
+                default_link_target: '_blank',
+                branding: false,
+                skin: 'lightgray'
             });
         },
         saveData() {
@@ -315,6 +318,10 @@ Vue.component('calendar-modal', {
         dayDescription: {
             type: String,
             required: true
+        },
+        saveData: {
+            type: Function,
+            required: true
         }
     },
     template: `
@@ -335,7 +342,7 @@ Vue.component('calendar-modal', {
                 </div>
             </div>
             <div class="modal-footer purple">
-                <button class="waves-effect waves-light btn red right z-depth-2" style="margin-right: 14px" v-on:click="saveDayDetails">
+                <button class="waves-effect waves-light btn red right z-depth-2" style="margin-right: 14px" @click="saveData(successCheck, quote)">
                     Save
                 </button>
             </div>
@@ -343,11 +350,7 @@ Vue.component('calendar-modal', {
     `,
     mounted() {
         $('#calendarModal').modal();
-    },
-    methods: {
-        saveDayDetails() {
-            this.$emit('saveDetails', { success: this.successCheck, quote: this.quote });
-        }
+        $('#calendarModal').modal('open');
     },
     data() {
         return {
