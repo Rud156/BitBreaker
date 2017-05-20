@@ -349,8 +349,14 @@ Vue.component('calendar-modal', {
         </div>
     `,
     mounted() {
-        $('#calendarModal').modal();
+        $('#calendarModal').modal({
+            complete: () => {
+                this.$emit('destroy-modal', null);
+            }
+        });
         $('#calendarModal').modal('open');
+        Materialize.updateTextFields();
+        $('textarea#dailyData').characterCounter();
     },
     data() {
         return {

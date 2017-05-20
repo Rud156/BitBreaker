@@ -54,7 +54,7 @@ const HabitDetails = {
     template: `
         <div style="padding-bottom: 30px; font-family: 'Lobster', cursive; margin-top: 20px" v-if="habit" class="container">
 
-            <calendar-modal v-if="dayData" :success="dayData.success" :day-description="dayData.title" :save-data="updateEvent"></calendar-modal>
+            <calendar-modal v-if="dayData" v-on:destroy-modal="destroyModal" :success="dayData.success" :day-description="dayData.title" :save-data="updateEvent"></calendar-modal>
             
             <div><router-link to="/user/dashboard"><i class="material-icons" style="font-size: 40px">arrow_back</i></router-link></div>
             <h4 class="center">{{habit.title}}</h4>
@@ -98,6 +98,10 @@ const HabitDetails = {
                     messageUtility.handleError(error);
                 }
             });
+        },
+        destroyModal() {
+            $('#calendarModal').modal('close'); // Hacky Fix to remove black screen
+            this.dayData = null;
         },
         showEvent(calendarEvent) {
             // TODO: Calculate SetDate here and display simple view if the date has crossed the limit
