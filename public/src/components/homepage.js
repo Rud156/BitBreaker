@@ -56,8 +56,6 @@ Vue.component('about-slider', {
 const HomePage = {
     template: `
         <div>
-            <nav-bar :logged-in="false"></nav-bar>
-
             <login-modal></login-modal>
             <register-modal></register-modal>
 

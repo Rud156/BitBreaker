@@ -1,7 +1,6 @@
 const UserPage = {
     template: `
         <div>
-            <nav-bar :logged-in="true"></nav-bar>
             <editor-modal v-on:add-new-habit="addNewHabit"></editor-modal>
 
             <router-view :active-habits="activeHabits" :ended-habits="endedHabits" :mark-complete="markComplete" :remove-habit="removeHabit" :loading="loading"></router-view>
@@ -37,7 +36,7 @@ const UserPage = {
                     }
                     else {
                         messageUtility.showMessages(data.message);
-                        window.localStorage.removeItem('user');
+                        store.commit('removeUser');
                         router.push({ path: '/' });
                     }
                 },

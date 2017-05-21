@@ -48,9 +48,8 @@ Vue.component('login-modal', {
                     if (data.success) {
 
                         let user = utilityFunctions.stringToTitleCase(data.user.username);
-                        userObject = { username: user };
+                        store.commit('setUser', { username: user });
 
-                        window.localStorage.setItem('user', userObject.username);
                         $('#loginModal').modal('close');
                         router.push({ path: 'user/dashboard' });
                     }
@@ -273,7 +272,7 @@ Vue.component('editor-modal', {
                 startDate,
                 totalDays,
                 forever: checked,
-                username: userObject.username
+                username: store.state.userObject.username
             };
 
             $.ajax({

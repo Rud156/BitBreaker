@@ -82,7 +82,6 @@ const DashBoard = {
     },
     data() {
         return {
-            user: userObject,
             potentiallyRemovableHabit: null
         };
     }

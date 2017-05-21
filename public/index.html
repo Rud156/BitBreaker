@@ -20,6 +20,7 @@
     <script src="./javascripts/jquery-ui.min.js"></script>
     <script src="./javascripts/vue.js"></script>
     <script src="./javascripts/vue-router.js"></script>
+    <script src="./javascripts/vuex.js"></script>
     <script src="./javascripts/moment.js"></script>
     <script src="./javascripts/fullcalendar.min.js"></script>
     <script src="./javascripts/materialize.min.js"></script>
@@ -71,12 +72,13 @@
 
 <body>
 
-    
+
     <div id="alertModal" class="modal">
         <div class="modal-content center" id="alertModalContent"></div>
     </div>
-    
+
     <div id="app">
+        <nav-bar :user="returnUser"></nav-bar>
         <router-view></router-view>
         <page-footer></page-footer>
     </div>
