@@ -54,8 +54,9 @@ const HabitDetails = {
     template: `
         <div style="padding-bottom: 30px; font-family: 'Lobster', cursive; margin-top: 20px" v-if="habit" class="container">
 
-            <calendar-modal v-if="dayData" v-on:destroy-modal="destroyModal" :success="dayData.success" :day-description="dayData.title" :save-data="updateEvent"></calendar-modal>
-            
+            <day-viewer-modal v-if="dayViewData" v-on:destroy-modal="destroyModal" :title="dayViewData.title" :succeeded="dayViewData.success" :show-button="showEditButton" :edit-habit="editHabit"></day-viewer-modal>
+            <calendar-modal v-if="dayEditData" v-on:destroy-modal="destroyModal" :success="dayEditData.success" :day-description="dayEditData.title" :save-data="updateEvent"></calendar-modal>
+
             <div><router-link to="/user/dashboard"><i class="material-icons" style="font-size: 40px">arrow_back</i></router-link></div>
             <h4 class="center">{{habit.title}}</h4>
             <div class="center grey-text" v-html="habit.description"></div>
@@ -99,18 +100,28 @@ const HabitDetails = {
                 }
             });
         },
-        destroyModal() {
-            $('#calendarModal').modal('close'); // Hacky Fix to remove black screen
-            this.dayData = null;
+        destroyModal(modalName) {
+            $(modalName).modal('close'); // Hacky Fix to remove black screen
+            this.dayViewData = null;
+            if (modalName === '#calendarModal')
+                this.dayEditData = null;
         },
         showEvent(calendarEvent) {
-            // TODO: Calculate SetDate here and display simple view if the date has crossed the limit
-            // Do not open the modal in that case
-            this.dayData = calendarEvent;
+            this.dayViewData = calendarEvent;
+
+            let setDate = utilityFunctions.dateDiffAbsolute(new Date(), calendarEvent.start._d);
+            if (setDate >= -3 && setDate <= 0)
+                this.showEditButton = true;
+            else
+                this.showEditButton = false;
+        },
+        editHabit() {
+            this.dayEditData = this.dayViewData;
+            $("#dayModal").modal('close');
         },
         updateEvent(success, description) {
             let hash = this.habit.hash;
-            let setDate = utilityFunctions.dateDiffAbsolute(new Date(), this.dayData.start._d);
+            let setDate = utilityFunctions.dateDiffAbsolute(new Date(), this.dayEditData.start._d);
 
             if (hash === null || hash === undefined) {
                 messageUtility.showMessages('You\'re not playing fair!!!');
@@ -133,17 +144,17 @@ const HabitDetails = {
                 data: JSON.stringify({ success: success, dayQuote: description, setDate: setDate }),
                 success: (data) => {
                     if (data.success) {
-                        this.dayData.success = data.updatedStatus.success;
-                        this.dayData.title = data.updatedStatus.quote;
+                        this.dayEditData.success = data.updatedStatus.success;
+                        this.dayEditData.title = data.updatedStatus.quote;
 
                         if (data.updatedStatus.success)
-                            this.dayData.color = 'green';
+                            this.dayEditData.color = 'green';
                         else
-                            this.dayData.color = 'red';
+                            this.dayEditData.color = 'red';
 
-                        $('#calendar').fullCalendar('updateEvent', this.dayData);
+                        $('#calendar').fullCalendar('updateEvent', this.dayEditData);
                         $('#calendarModal').modal('close'); // Hacky Fix to remove black screen
-                        this.dayData = null;
+                        this.dayEditData = null;
                     }
                     else
                         messageUtility.showMessages(data.message);
@@ -160,7 +171,9 @@ const HabitDetails = {
             habit: null,
             events: [],
 
-            dayData: null
+            dayViewData: null,
+            dayEditData: null,
+            showEditButton: false
         };
     }
 };

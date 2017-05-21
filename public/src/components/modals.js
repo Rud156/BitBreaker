@@ -184,7 +184,7 @@ Vue.component('editor-modal', {
             <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
                 <h5>New Habit</h5>
             </div>
-            <div class="modal-content purple lighten-1" style="font-family: 'Lobster', cursive">
+            <div class="modal-content purple lighten-1" style="font-family: 'Roboto', GillSans, Calibri, Trebuchet, sans-serif;">
                 <div class="row white-text">
                     <div class="input-field col s12">
                         <input id="bitTitle" type="text" class="validate" v-model="title">
@@ -240,7 +240,7 @@ Vue.component('editor-modal', {
                 },
                 default_link_target: '_blank',
                 branding: false,
-                skin: 'lightgray'
+                skin: 'custom'
             });
         },
         saveData() {
@@ -324,11 +324,11 @@ Vue.component('calendar-modal', {
         }
     },
     template: `
-        <div id="calendarModal" class="modal">
+        <div id="calendarModal" class="modal" style="font-family: 'Roboto', GillSans, Calibri, Trebuchet, sans-serif;">
             <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
                 <h5>Edit Day Details</h5>
             </div>
-            <div class="modal-content purple lighten-1" style="font-family: 'Lobster', cursive">
+            <div class="modal-content purple lighten-1" style="font-family: 'Roboto', GillSans, Calibri, Trebuchet, sans-serif;">
                 <div class="row">
                     <div class="input-field col s12 center">
                         <input type="checkbox" id="successCheck" class="filled-in" v-model="successCheck" />
@@ -350,7 +350,7 @@ Vue.component('calendar-modal', {
     mounted() {
         $('#calendarModal').modal({
             complete: () => {
-                this.$emit('destroy-modal', null);
+                this.$emit('destroy-modal', "#calendarModal");
             }
         });
         $('#calendarModal').modal('open');
@@ -362,5 +362,53 @@ Vue.component('calendar-modal', {
             successCheck: this.success,
             quote: this.dayDescription
         };
+    }
+});
+
+Vue.component('day-viewer-modal', {
+    props: {
+        title: {
+            type: String,
+            required: true
+        },
+        succeeded: {
+            type: Boolean,
+            required: true
+        },
+        showButton: {
+            type: Boolean,
+            required: true
+        },
+        editHabit: {
+            type: Function
+        }
+    },
+    template: `
+        <div class="modal" id="dayModal" style="font-family: 'Roboto', GillSans, Calibri, Trebuchet, sans-serif;">
+            <div class="modal-header light-blue darken-1 white-text center" style="padding: 14px; font-family: 'Lobster', cursive">
+                <h5>Day Details:</h5>
+            </div>
+            <div class="modal-content purple lighten-1 center" style="font-family: 'Roboto', GillSans, Calibri, Trebuchet, sans-serif;">
+                <div class="row white-text">
+                    <h5 class="center">{{title}}</h5>
+                    <br />
+                    <div :style="[succeeded ? { color: 'green' } : { color: 'red' }]">You {{succeeded ? 'succeeded' : 'failed'}} on this day.</div>
+                </div>
+            </div>
+            <div class="modal-footer purple" v-if="showButton">
+                <button class="waves-effect waves-light btn red right z-depth-2" style="margin-right: 14px" @click="editHabit">
+                    <i class="material-icons left">edit</i>
+                    Edit
+                </button>
+            </div>
+        </div>
+    `,
+    mounted() {
+        $('#dayModal').modal({
+            complete: () => {
+                this.$emit('destroy-modal', "#dayModal");
+            }
+        });
+        $("#dayModal").modal('open');
     }
 });
