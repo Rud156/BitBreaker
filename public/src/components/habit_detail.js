@@ -110,7 +110,7 @@ const HabitDetails = {
             this.dayViewData = calendarEvent;
 
             let setDate = utilityFunctions.dateDiffAbsolute(new Date(), calendarEvent.start._d);
-            if (setDate >= -3 && setDate <= 0)
+            if (setDate >= -3 && setDate <= 0 && !this.habit.ended)
                 this.showEditButton = true;
             else
                 this.showEditButton = false;
