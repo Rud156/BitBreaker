@@ -11,7 +11,6 @@ router.get('/all', utilities.checkAuthentication, function (req, res, next) {
     Model.BitBreaks.find({ username: res.locals.user.username }, function (err, bitBreaks) {
         if (err)
             throw err;
-        bitBreaks = utilities.setHabitDates(bitBreaks);
         return res.json({ success: true, message: 'Found all habits of current user', bitBreaks: bitBreaks });
     });
 });
@@ -25,8 +24,8 @@ router.get('/one/:hash', utilities.checkAuthentication, function (req, res, next
             return res.json({ success: false, message: 'Invalid habit requested' });
         else {
             bitBreakObject = utilities.setHabitDate(bitBreakObject);
-            var maxStreak = utilities.calculateStreak(bitBreakObject);
-            return res.json({ success: true, message: 'Habit successfully found', bitBreak: bitBreakObject, maxStreak: maxStreak });
+            var streakObject = utilities.calculateStreak(bitBreakObject);
+            return res.json({ success: true, message: 'Habit successfully found', bitBreak: bitBreakObject, streakDetails: streakObject });
         }
     });
 });
@@ -81,10 +80,14 @@ router.patch('/one/:hash', utilities.checkAuthentication, function (req, res, ne
                 if (!updatedObject)
                     return res.json({ success: false, message: 'Invalid habit was specified' });
 
+                dailyStatus = utilities.setHabitDate(updatedObject);
+                var streakObject = utilities.calculateStreak(updatedObject);
+
                 return res.json({
                     success: true,
                     message: 'Habit successfully updated',
-                    updatedStatus: updatedObject.dailyStatus[dateDiff]
+                    updatedStatus: updatedObject.dailyStatus[dateDiff],
+                    streakDetails: streakObject
                 });
             });
         }

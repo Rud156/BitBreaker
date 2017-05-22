@@ -26,6 +26,7 @@
     <script src="./javascripts/materialize.min.js"></script>
     <script src="./javascripts/tinymce.min.js"></script>
     <script src="./javascripts/flatpickr.js"></script>
+    <script src="./javascripts/Chart.min.js"></script>
 
     <script src="./JS/Models.js"></script>
     <script src="utilities.js"></script>
@@ -36,10 +37,15 @@
         html,
         body {
             width: 100%;
-            height: 100%;
             margin: 0;
             padding: 0;
-            overflow: auto;
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
         }
 
         blockquote {

@@ -4,7 +4,7 @@
         if (req.isAuthenticated())
             return next();
         else {
-            return res.json({ success: false, message: 'User is not logged in' });
+            return res.json({ success: false, message: 'You need to be logged in to view that page' });
         }
     };
 
@@ -46,6 +46,7 @@
         var dailyStatus = userHabit.dailyStatus;
         var currentStreak = 0;
         var maxStreak = 0;
+        var streakArray = [];
         dailyStatus.forEach(function (value) {
             if (value.success)
                 currentStreak++;
@@ -54,8 +55,11 @@
                     maxStreak = currentStreak;
                 currentStreak = 0;
             }
+            streakArray.push(currentStreak);
         });
-        return maxStreak;
+        if(currentStreak > maxStreak)
+            maxStreak = currentStreak;
+        return { maxStreak: maxStreak, streakResults: streakArray };
     };
 
     exports.setHabitDates = function (userHabits) {

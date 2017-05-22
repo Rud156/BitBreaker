@@ -13,20 +13,14 @@ function MessageUtilities() {
 }
 // End of utility functions
 
-// Helper function to format and store username
-function LoggedUser(userObject) {
-    this.userName = utilityFunctions.stringToTitleCase(userObject.username);
-}
-// End of helper function to format and store username
-
 // Helper function to hold the habits in a standard format
-function BitBreaks(habitObject, maxStreak) {
+function BitBreaks(habitObject, streakDetails) {
     this.hash = habitObject.hash;
     this.title = utilityFunctions.stringToTitleCase(habitObject.title);
     this.description = decodeURI(habitObject.description);
     this.startDate = new Date(habitObject.startDate);
     this.totalDays = habitObject.totalDays;
-    this.maxStreak = (maxStreak !== undefined || maxStreak !== null) ? maxStreak : null;
+    this.streakDetails = (streakDetails !== undefined || streakDetails !== null) ? streakDetails : null;
 
     this.foreverHabit = habitObject.foreverHabit;
 

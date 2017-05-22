@@ -44,6 +44,62 @@ Vue.component('calendar', {
     }
 });
 
+Vue.component('chart', {
+    props: {
+        streakArray: {
+            type: Array,
+            required: true
+        }
+    },
+    template: `
+        <canvas id="chart" style="margin-top: 40px"></canvas>
+    `,
+    mounted() {
+        let labelArray = [];
+        this.streakArray.forEach((element, index) => {
+            labelArray.push(index + 1);
+        });
+        let context = document.getElementById('chart').getContext('2d');
+        this.myChart = new Chart(context, {
+            type: 'line',
+            data: {
+                labels: labelArray,
+                datasets: [{
+                    label: 'Your Streaks',
+                    data: this.streakArray,
+                    borderColor: 'rgba(153, 0, 204, 0.7)',
+                    backgroundColor: 'rgba(153, 0, 204, 0.5)',
+                    pointBackgroundColor: 'rgb(153, 0, 204)'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            callback: function (value) {
+                                if (value % 1 === 0)
+                                    return value;
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+    },
+    watch: {
+        streakArray(updatedArray) {
+            this.myChart.data.datasets[0].data = updatedArray;
+            this.myChart.update();
+        }
+    },
+    data() {
+        return {
+            myChart: null
+        };
+    }
+});
+
 const HabitDetails = {
     props: {
         hash: {
@@ -60,13 +116,14 @@ const HabitDetails = {
             <div><router-link to="/user/dashboard"><i class="material-icons" style="font-size: 40px">arrow_back</i></router-link></div>
             <h4 class="center">{{habit.title}}</h4>
             <div class="center grey-text" v-html="habit.description"></div>
-            <div>Max Streak: {{habit.maxStreak}}</div>
-            <div>Start Date: {{habit.startDate}}</div>
+            <div>Max Streak: {{habit.streakDetails.maxStreak}}</div>
+            <div>Start Date: {{habit.startDate.toDateString()}}</div>
 
             <div class="center" v-if="!habit.foreverHabit">You have a lot of time but better work hard...</div>
             <div class="center" v-else>Looks like you have only {{habit.daysLeft}} days left. So rather not waste time...</div>
             
             <calendar :events="events" :displayEvent="showEvent"></calendar>
+            <chart :streak-array="habit.streakDetails.streakResults"></chart>
 
         </div>
         <div v-else class="center" style="margin-top: 40px">
@@ -86,7 +143,7 @@ const HabitDetails = {
                 url: '/habits/one/' + this.hash,
                 success: (data) => {
                     if (data.success) {
-                        this.habit = new BitBreaks(data.bitBreak, data.maxStreak);
+                        this.habit = new BitBreaks(data.bitBreak, data.streakDetails);
                         let events = [];
                         for (let i = 0; i < this.habit.dailyStatus.length; i++)
                             events.push(new CalendarDates(this.habit.dailyStatus[i], this.habit.startDate, i));
@@ -155,6 +212,8 @@ const HabitDetails = {
                         $('#calendar').fullCalendar('updateEvent', this.dayEditData);
                         $('#calendarModal').modal('close'); // Hacky Fix to remove black screen
                         this.dayEditData = null;
+
+                        this.habit.streakDetails = data.streakDetails;
                     }
                     else
                         messageUtility.showMessages(data.message);

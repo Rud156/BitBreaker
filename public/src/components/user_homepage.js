@@ -1,6 +1,6 @@
 const UserPage = {
     template: `
-        <div>
+        <div style="margin: 30px 0">
             <editor-modal v-on:add-new-habit="addNewHabit"></editor-modal>
 
             <router-view :active-habits="activeHabits" :ended-habits="endedHabits" :mark-complete="markComplete" :remove-habit="removeHabit" :loading="loading"></router-view>
