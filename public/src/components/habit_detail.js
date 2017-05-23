@@ -138,9 +138,12 @@ const HabitDetails = {
     },
     methods: {
         fetchHabit() {
+            let date = new Date();
+            let timezone = date.getTimezoneOffset();
+
             $.ajax({
                 type: 'GET',
-                url: '/habits/one/' + this.hash,
+                url: '/habits/one/' + this.hash + '?timezone=' + timezone,
                 success: (data) => {
                     if (data.success) {
                         this.habit = new BitBreaks(data.bitBreak, data.streakDetails);
@@ -166,7 +169,11 @@ const HabitDetails = {
         showEvent(calendarEvent) {
             this.dayViewData = calendarEvent;
 
-            let setDate = utilityFunctions.dateDiffAbsolute(new Date(), calendarEvent.start._d);
+            let date = new Date();
+            date.setTime(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
+            date.setUTCHours(0, 0, 0, 0);
+            
+            let setDate = utilityFunctions.dateDiffAbsolute(date, calendarEvent.start._d);
             if (setDate >= -3 && setDate <= 0 && !this.habit.ended)
                 this.showEditButton = true;
             else
@@ -178,7 +185,12 @@ const HabitDetails = {
         },
         updateEvent(success, description) {
             let hash = this.habit.hash;
-            let setDate = utilityFunctions.dateDiffAbsolute(new Date(), this.dayEditData.start._d);
+
+            let date = new Date();
+            date.setTime(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
+            date.setUTCHours(0, 0, 0, 0);
+
+            let setDate = utilityFunctions.dateDiffAbsolute(date, this.dayEditData.start._d);
 
             if (hash === null || hash === undefined) {
                 messageUtility.showMessages('You\'re not playing fair!!!');
@@ -194,10 +206,13 @@ const HabitDetails = {
                 return;
             }
 
+            date = new Date();
+            let timezone = date.getTimezoneOffset();
+
             $.ajax({
                 type: 'PATCH',
                 contentType: 'application/json',
-                url: '/habits/one/' + hash,
+                url: '/habits/one/' + hash + '?timezone=' + timezone,
                 data: JSON.stringify({ success: success, dayQuote: description, setDate: setDate }),
                 success: (data) => {
                     if (data.success) {

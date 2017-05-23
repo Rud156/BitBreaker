@@ -6,6 +6,7 @@ var crypto = require('crypto');
 var Model = require('./model');
 var utilities = require('./../helpers/utilities');
 
+// TODO: Fix timezone bug
 
 router.get('/all', utilities.checkAuthentication, function (req, res, next) {
     Model.BitBreaks.find({ username: res.locals.user.username }, function (err, bitBreaks) {
@@ -17,13 +18,20 @@ router.get('/all', utilities.checkAuthentication, function (req, res, next) {
 
 router.get('/one/:hash', utilities.checkAuthentication, function (req, res, next) {
     var hash = req.params.hash;
+
+    var timezoneOffset = req.query.timezone;
+    timezoneOffset = parseInt(timezoneOffset);
+
+    if (timezoneOffset === undefined)
+        return res.json({ success: false, message: 'Invalid request parameters' });
+
     Model.BitBreaks.findOne({ hash: hash }, function (err, bitBreakObject) {
         if (err)
             throw err;
         if (!bitBreakObject)
             return res.json({ success: false, message: 'Invalid habit requested' });
         else {
-            bitBreakObject = utilities.setHabitDate(bitBreakObject);
+            bitBreakObject = utilities.setHabitDate(bitBreakObject, timezoneOffset);
             var streakObject = utilities.calculateStreak(bitBreakObject);
             return res.json({ success: true, message: 'Habit successfully found', bitBreak: bitBreakObject, streakDetails: streakObject });
         }
@@ -34,7 +42,11 @@ router.patch('/one/:hash', utilities.checkAuthentication, function (req, res, ne
     var success = req.body.success;
     var dayQuote = req.body.dayQuote;
     var setDate = req.body.setDate;
-    if (success === undefined || dayQuote === undefined || setDate === undefined || typeof (setDate) !== 'number' ||
+
+    var timezoneOffset = req.query.timezone;
+    timezoneOffset = parseInt(timezoneOffset);
+
+    if (timezoneOffset === undefined || success === undefined || dayQuote === undefined || setDate === undefined || typeof (setDate) !== 'number' ||
         typeof (dayQuote) !== 'string' || typeof (success) !== 'boolean') {
         return res.json({ success: false, message: 'Incorrect fields specified for updating' });
     }
@@ -60,10 +72,12 @@ router.patch('/one/:hash', utilities.checkAuthentication, function (req, res, ne
                 return res.json({ success: false, message: 'Invalid date diffrence structure' });
 
             var today = new Date();
+            today.setTime(today.getTime() - timezoneOffset * 60 * 1000);
             today.setUTCHours(0, 0, 0, 0);
 
             today = utilities.endingDate(today, dateDiff);
             dateDiff = utilities.dateDiff(bitBreakObject.startDate, today);
+            
 
             if (today.getTime() < bitBreakObject.startDate)
                 return res.json({ success: false, message: 'Data cannot be editied for time before the starting date' });
@@ -80,7 +94,7 @@ router.patch('/one/:hash', utilities.checkAuthentication, function (req, res, ne
                 if (!updatedObject)
                     return res.json({ success: false, message: 'Invalid habit was specified' });
 
-                dailyStatus = utilities.setHabitDate(updatedObject);
+                dailyStatus = utilities.setHabitDate(updatedObject, timezoneOffset);
                 var streakObject = utilities.calculateStreak(updatedObject);
 
                 return res.json({

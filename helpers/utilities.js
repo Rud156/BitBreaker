@@ -57,7 +57,7 @@
             }
             streakArray.push(currentStreak);
         });
-        if(currentStreak > maxStreak)
+        if (currentStreak > maxStreak)
             maxStreak = currentStreak;
         return { maxStreak: maxStreak, streakResults: streakArray };
     };
@@ -98,8 +98,9 @@
         return userHabits;
     };
 
-    exports.setHabitDate = function (userHabit) {
+    exports.setHabitDate = function (userHabit, timezoneOffset) {
         var today = new Date();
+        today.setTime(today.getTime() - timezoneOffset * 60 * 1000);
         today.setUTCHours(0, 0, 0, 0);
 
         var dailyStatus = userHabit.dailyStatus;
