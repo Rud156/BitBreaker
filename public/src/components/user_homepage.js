@@ -76,11 +76,13 @@ const UserPage = {
         },
         markComplete(habit) {
             let hash = habit.hash;
+            let date = new Date();
+            let timezone = date.getTimezoneOffset();
 
             $.ajax({
                 type: 'PATCH',
                 contentType: 'application/json',
-                url: '/habits/endhabit/' + hash,
+                url: '/habits/endhabit/' + hash + '?timezone=' + timezone,
                 success: (data) => {
                     if (data.success) {
                         this.activeHabits = this.activeHabits.filter((element) => {

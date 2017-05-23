@@ -261,6 +261,7 @@ Vue.component('editor-modal', {
             }
 
             let startDate = new Date();
+            startDate.setTime(startDate.getTime() - startDate.getTimezoneOffset() * 60 * 1000);
             startDate.setUTCHours(0, 0, 0, 0);
             let totalDays = -1;
             if (!checked)

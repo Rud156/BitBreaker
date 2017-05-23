@@ -109,6 +109,9 @@ router.patch('/one/:hash', utilities.checkAuthentication, function (req, res, ne
 
 router.patch('/endhabit/:hash', utilities.checkAuthentication, function (req, res, next) {
     var hash = req.params.hash;
+
+    var timezoneOffset = req.query.timezone;
+    timezoneOffset = parseInt(timezoneOffset);
     Model.BitBreaks.findOne({ hash: hash }, function (err, bitObject) {
         if (err)
             throw err;
@@ -119,6 +122,7 @@ router.patch('/endhabit/:hash', utilities.checkAuthentication, function (req, re
 
         bitObject.ended = true;
         var date = new Date();
+        date.setTime(date.getTime() - timezoneOffset * 60 * 1000);
         date.setUTCHours(0, 0, 0, 0);
         bitObject.totalDays = utilities.dateDiff(bitObject.startDate, date);
 
