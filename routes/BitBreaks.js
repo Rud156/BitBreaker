@@ -77,7 +77,6 @@ router.patch('/one/:hash', utilities.checkAuthentication, function (req, res, ne
 
             today = utilities.endingDate(today, dateDiff);
             dateDiff = utilities.dateDiff(bitBreakObject.startDate, today);
-            
 
             if (today.getTime() < bitBreakObject.startDate)
                 return res.json({ success: false, message: 'Data cannot be editied for time before the starting date' });

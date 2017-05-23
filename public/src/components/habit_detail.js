@@ -119,7 +119,7 @@ const HabitDetails = {
             <div>Max Streak: {{habit.streakDetails.maxStreak}}</div>
             <div>Start Date: {{habit.startDate.toDateString()}}</div>
 
-            <div class="center" v-if="!habit.foreverHabit">You have a lot of time but better work hard...</div>
+            <div class="center" v-if="habit.foreverHabit">You have a lot of time but better work hard...</div>
             <div class="center" v-else>Looks like you have only {{habit.daysLeft}} days left. So rather not waste time...</div>
             
             <calendar :events="events" :displayEvent="showEvent"></calendar>
@@ -172,7 +172,7 @@ const HabitDetails = {
             let date = new Date();
             date.setTime(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
             date.setUTCHours(0, 0, 0, 0);
-            
+
             let setDate = utilityFunctions.dateDiffAbsolute(date, calendarEvent.start._d);
             if (setDate >= -3 && setDate <= 0 && !this.habit.ended)
                 this.showEditButton = true;
