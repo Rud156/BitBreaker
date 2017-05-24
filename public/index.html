@@ -44,15 +44,16 @@
         }
 
         #app {
-            display: flex;
-            min-height: 100vh;
-            flex-direction: column;
+            display: table;
+            height: 100%;
+            width: 100%;
+            table-layout: fixed;
         }
 
-        .page-footer {
-            flex: 1 0 auto;
+        #pageFooter {
+            display: table-row;
+            height: 1px;
         }
-
         blockquote {
             padding-top: 30px;
             font-size: 40px;
@@ -90,7 +91,7 @@
 
     <div id="app">
         <nav-bar :user="returnUser"></nav-bar>
-        <router-view></router-view>
+        <router-view style="display: table-row; height: auto"></router-view>
         <page-footer></page-footer>
     </div>
 

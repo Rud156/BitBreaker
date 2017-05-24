@@ -1,15 +1,15 @@
 Vue.component('page-footer', {
     template: `
-        <footer class="page-footer blue darken-4">
-            <div class="footer-copyright">
+        <div id="pageFooter">
+            <div class="page-footer blue darken-4">
                 <div class="container blue darken-4" style="padding: 14px 0; font-family: 'Lobster', cursive">
                     <div class="container white-text">
                         © 2017 Copyright
                         <a href="https://www.github.com/Rud156" target="_blank" class="white-text right"> Desgined with 💗 by: Rud156 </a>
                     </div>
-                </div>
+                </div>    
             </div>
-        </footer>
+        </div>
     `
 });
 
