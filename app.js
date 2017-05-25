@@ -10,7 +10,7 @@ var passport = require('passport');
 
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://rud156:8624951753852456pP@ds151431.mlab.com:51431/bitbreaker');
+mongoose.connect('mongodb://rud156:1234@ds151431.mlab.com:51431/bitbreaker');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
