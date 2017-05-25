@@ -1,1 +1,0 @@
-'use strict';Vue.component('load-animation',{template:'\n         <div class="cssload-square">\n            <div class="cssload-square-part cssload-square-green"></div>\n            <div class="cssload-square-part cssload-square-pink"></div>\n            <div class="cssload-square-blend"></div>\n        </div>\n    '});
