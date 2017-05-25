@@ -20,7 +20,7 @@ Vue.component('nav-bar', {
         }
     },
     template: `
-        <div class="navbar-fixed">
+        <div>
             <nav>
                 <div class="nav-wrapper blue">
                     <a class="brand-logo center" style="font-family: 'Oleo Script', cursive">{{user ? user.username + "'s DashBoard" : 'Bit Breaker'}}</a>
@@ -28,7 +28,7 @@ Vue.component('nav-bar', {
                         <img src="./images/icon.png" alt="Brand Logo" style="padding-left: 14px; height: 95%; padding-top: 3px" />
                     </a>
 
-                    <a style="cursor: pointer" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+                    <a href="#" style="cursor: pointer" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
 
                     <ul class="right hide-on-med-and-down">
                         <li v-if="!user"><a href="#registerModal" class="waves-effect waves-light" style="font-family: 'Amaranth', sans-serif; font-size: 20px">Sign Up</a></li>
@@ -48,10 +48,7 @@ Vue.component('nav-bar', {
         </div>
     `,
     mounted() {
-        $(".button-collapse").sideNav({
-            draggable: true,
-            closeOnClick: true
-        });
+        $(".button-collapse").sideNav();
     },
     methods: {
         logoutUser() {

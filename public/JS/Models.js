@@ -3,7 +3,7 @@ function MessageUtilities() {
     this.handleError = function (error) {
         console.log(error);
         $('#alertModal').modal('open');
-        document.getElementById('alertModalContent').innerText = 'Error Occurred.';
+        document.getElementById('alertModalContent').innerText = 'Oops something went wrong. We were unable to load the required data. Please check your connection and try again.';
     };
 
     this.showMessages = function (message) {
@@ -30,6 +30,7 @@ function BitBreaks(habitObject, streakDetails) {
 
     // These will give incorrect values if forever habit is checked. Basically -ve values...
     this.daysLeft = utilityFunctions.daysLeft(this.startDate, habitObject.totalDays);
+    this.daysLeft = this.daysLeft < 0 ? 0 : this.daysLeft;
     this.endDate = utilityFunctions.endingDate(this.startDate, habitObject.totalDays);
 }
 // End of habit helper function

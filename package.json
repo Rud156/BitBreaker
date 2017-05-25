@@ -25,5 +25,9 @@
     "babel-preset-babili": "0.0.12",
     "babel-preset-env": "^1.4.0",
     "babili": "0.0.12"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Rudrangshu Nandi"
   }
 }
