@@ -6,12 +6,14 @@ var crypto = require('crypto');
 var Model = require('./model');
 var utilities = require('./../helpers/utilities');
 
-// TODO: Fix timezone bug
-
 router.get('/all', utilities.checkAuthentication, function (req, res, next) {
     Model.BitBreaks.find({ username: res.locals.user.username }, function (err, bitBreaks) {
         if (err)
             throw err;
+        bitBreaks.forEach(function (element) {
+            element.title = decrypt(element.title, res.locals.user.password);
+            element.description = decrypt(element.description, res.locals.user.password);
+        });
         return res.json({ success: true, message: 'Found all habits of current user', bitBreaks: bitBreaks });
     });
 });
@@ -33,6 +35,10 @@ router.get('/one/:hash', utilities.checkAuthentication, function (req, res, next
         else {
             bitBreakObject = utilities.setHabitDate(bitBreakObject, timezoneOffset);
             var streakObject = utilities.calculateStreak(bitBreakObject);
+
+            bitBreakObject.title = decrypt(bitBreakObject.title, res.locals.user.password);
+            bitBreakObject.description = decrypt(bitBreakObject.description, res.locals.user.password);
+
             return res.json({ success: true, message: 'Habit successfully found', bitBreak: bitBreakObject, streakDetails: streakObject });
         }
     });
@@ -131,6 +137,10 @@ router.patch('/endhabit/:hash', utilities.checkAuthentication, function (req, re
                 throw err;
             if (!updatedObject)
                 return res.json({ success: false, message: 'Invalid habit was requested' });
+
+            updatedObject.title = decrypt(updatedObject.title, res.locals.user.password);
+            updatedObject.description = decrypt(updatedObject.description, res.locals.user.password);
+
             return res.json({ success: true, message: 'Habit successfully updated', bitBreak: updatedObject });
         });
     });
@@ -167,6 +177,8 @@ router.post('/save', utilities.checkAuthentication, function (req, res, next) {
     }
 
     var hash = crypto.createHash('sha256').update(title + username).digest('hex');
+    title = encrypt(title, res.locals.user.password);
+    description = encrypt(description, res.locals.user.password);
 
     Model.BitBreaks.findOne({ hash: hash }, function (err, bitBreakObject) {
         if (err)
@@ -187,6 +199,10 @@ router.post('/save', utilities.checkAuthentication, function (req, res, next) {
         newHabit.save(function (err, newHabitObject) {
             if (err)
                 throw err;
+
+            newHabitObject.title = decrypt(newHabitObject.title, res.locals.user.password);
+            newHabitObject.description = decrypt(newHabitObject.description, res.locals.user.password);
+
             return res.json({ success: true, message: 'Habit successfully saved', bitBreak: newHabitObject });
         });
     });
@@ -211,5 +227,21 @@ router.delete('/delete/:hash', function (req, res, next) {
         });
     });
 });
+
+function encrypt(dataToEncrypt, key) {
+    var cipher = crypto.createCipher('aes-256-ctr', key);
+    var encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
+    encryptedData += cipher.final('hex');
+    return encryptedData;
+}
+
+function decrypt(dataToDecrypt, key) {
+    var deCipher = crypto.createDecipher('aes-256-ctr', key);
+    var decryptedData = deCipher.update(dataToDecrypt, 'hex', 'utf8');
+    decryptedData += deCipher.final('utf8');
+    return decryptedData;
+}
+
+
 
 module.exports = router;
