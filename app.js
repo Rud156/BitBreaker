@@ -10,6 +10,7 @@ var passport = require('passport');
 
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
+// mongoose.connect('mongodb://localhost:27017/BitBreak');
 mongoose.connect('mongodb://rud156:1234@ds151431.mlab.com:51431/bitbreaker');
 
 var index = require('./routes/index');
