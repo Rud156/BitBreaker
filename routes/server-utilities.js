@@ -20,7 +20,7 @@ function setHabitDate(userHabit, timezoneOffset, key) {
             if (!dailyStatus[i]) {
                 dailyStatus[i] = {};
                 dailyStatus[i].success = false;
-                dailyStatus[i].quote = 'Nothing Here';
+                dailyStatus[i].quote = 'You have not added anything for this day.';
             }
             else
                 dailyStatus[i].quote = decrypt(dailyStatus[i].quote, key);
@@ -32,7 +32,7 @@ function setHabitDate(userHabit, timezoneOffset, key) {
             if (!dailyStatus[i]) {
                 dailyStatus[i] = {};
                 dailyStatus[i].success = false;
-                dailyStatus[i].quote = 'Nothing Here';
+                dailyStatus[i].quote = 'You have not added anything for this day.';
             }
             else
                 dailyStatus[i].quote = decrypt(dailyStatus[i].quote, key);
